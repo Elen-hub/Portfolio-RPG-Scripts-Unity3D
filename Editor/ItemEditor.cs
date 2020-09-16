@@ -254,9 +254,9 @@ public class ItemEditor : EditorWindow
         }
         else
         {
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Handle: </color>", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Handle: </color>", m_guiStyle);
             posY += 20;
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Please input handle</color>.", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Please input handle</color>.", m_guiStyle);
             posY += 30;
             ShowItemType(ref posY);
         }
@@ -265,7 +265,7 @@ public class ItemEditor : EditorWindow
     }
     void ShowItemType(ref int posY)
     {
-        EditorGUI.LabelField(new Rect(0, posY, m_windowSize/2, 20), "<color=black>SearchType: </color>", m_guiStyle);
+        EditorGUI.LabelField(new Rect(0, posY, m_windowSize/2, 20), "<color=white>SearchType: </color>", m_guiStyle);
         EItemType type = (EItemType)EditorGUI.EnumPopup(new Rect(m_windowSize / 2, posY, m_windowSize/2, 20), m_currShowType);
         posY += 20;
         if(Items == null || m_currShowType != type)
@@ -285,7 +285,7 @@ public class ItemEditor : EditorWindow
                 switch(Items[i].Rarity)
                 {
                     case EItemRarity.Normal:
-                        output = "<color=black>";
+                        output = "<color=white>";
                         break;
                     case EItemRarity.Magic:
                         output = "<color=cyan>";

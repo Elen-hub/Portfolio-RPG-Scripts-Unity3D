@@ -20,17 +20,15 @@ public class Skill_Crusader_Advent : BaseSkill
     }
     public override void Use()
     {
-        base.Use();
+        PossibleSkill = false;
+        ElapsedTime = 0;
+        Caster.StatSystem.CurrMP -= SkillInfo.MP;
+
         StartCoroutine(Skill());
     }
 
     IEnumerator Skill()
     {
-        Caster.AttackSystem.Invincibility = true;
-        Caster.MoveSystem.Stop = true;
-        Caster.StatSystem.CurrHP = Caster.StatSystem.GetHP;
-        Caster.State = BaseCharacter.CharacterState.Death;
-        Caster.Animator.Play("Death");
         yield return new WaitForSeconds(0.5f);
         EffectMng.Instance.FindEffect("Skill/Effect_Crusader_AdventCharge", transform.position, Vector3.zero, 3);
         yield return new WaitForSeconds(2f);

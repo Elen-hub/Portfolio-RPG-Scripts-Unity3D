@@ -39,8 +39,9 @@ public partial class InputWindow_BasicJoystick : MonoBehaviour, IPointerUpHandle
     public void Disabled()
     {
         m_isDown = false;
+        //NetworkMng.Instance.NotifyCharacterState_Idle();
         SetJoystickButtonAnchor(Vector2.zero);
-        // m_character.State = BaseCharacter.CharacterState.Idle;
+        m_character.State = BaseCharacter.CharacterState.Idle;
         gameObject.SetActive(false);
     }
 	public void OnPointerDown (PointerEventData eventData)

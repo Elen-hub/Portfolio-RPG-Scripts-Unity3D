@@ -86,6 +86,7 @@ public class Hero_Crusader : BaseHero
 
         if (StatSystem.CurrHP < damage)
         {
+            StatSystem.CurrHP = 0;
             if (tag == "Player")
             {
                 if (AttackSystem.SkillDic.ContainsKey(56))
@@ -93,16 +94,16 @@ public class Hero_Crusader : BaseHero
                     if (AttackSystem.SkillDic[56].Using())
                     {
                         MoveSystem.Stop = true;
+                        AttackSystem.Invincibility = true;
+                        MoveSystem.Stop = true;
                         State = CharacterState.Death;
                         Animator.Play("Death");
                         NetworkMng.Instance.NotifyCharacterState_Skill(transform.eulerAngles, 56);
-                        return;
                     }
                 }
+                else 
+                    StartCoroutine(DeathAction());
             }
-
-            StartCoroutine(DeathAction());
-            return;
         }
 
         //if(transform.tag == "Player")

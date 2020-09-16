@@ -81,6 +81,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         RmiContext rmi = RmiContext.ReliableSend;
         rmi.enableLoopback = true;
 
+        Debug.Log("RequestSkill");
         m_behaviorP2PProxy.NotifyCharacterSkill(m_groupID, rmi, dir, skillHandle);
     }
     public void NotifyCharacterState_SkillEnd(UnityEngine.Vector3 dir, int skillHandle)
@@ -266,12 +267,6 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         m_behaviorP2PStub.NotifyCharacterSkill = (Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, UnityEngine.Vector3 dir, int skillHandle) =>
         {
             BaseCharacter character = PlayerMng.Instance.PlayerList[remote].Character;
-            if (character.State == BaseCharacter.CharacterState.Death)
-                return true;
-            if (character.IsStun || character.IsHit || character.IsNuckback)
-                return true;
-            if (character.AttackSystem.HoldAttack)
-                return false;
             character.transform.eulerAngles = dir;
             if (!character.AttackSystem.SkillDic.ContainsKey(skillHandle))
                 CharacterMng.Instance.AddSkill(character, skillHandle);

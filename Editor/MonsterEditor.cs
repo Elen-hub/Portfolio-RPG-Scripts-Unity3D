@@ -33,7 +33,7 @@ public class MonsterEditor : EditorWindow
         m_guiStyle = new GUIStyle();
         m_guiStyle.richText = true;
 
-        if(m_statEdit == null)
+        if (m_statEdit == null)
             m_statEdit = ScriptableObject.CreateInstance(typeof(StatEdit)) as StatEdit;
         if(m_prefabEdit ==null)
             m_prefabEdit = ScriptableObject.CreateInstance(typeof(PrefabEdit)) as PrefabEdit;
@@ -249,9 +249,9 @@ public class MonsterEditor : EditorWindow
             m_prefabEdit.Reset();
             m_normalAttackEdit.Reset();
 
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Handle: </color>", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Handle: </color>", m_guiStyle);
             posY += 20;
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Please input handle</color>.", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Please input handle</color>.", m_guiStyle);
             posY += 20;
             SearchList(ref posY);
         }

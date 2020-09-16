@@ -15,9 +15,9 @@ public class LetterBox : MonoBehaviour
         float scaleX = Screen.width - 1920;
         float scaleY = Screen.height - 1080;
         m_leftBox.rectTransform.sizeDelta = new Vector2(scaleX / 2, 1080);
-        m_leftBox.rectTransform.localPosition = new Vector3(-Screen.width/2 + scaleX / 4, 0, 0);
+        m_leftBox.rectTransform.localPosition = new Vector3(-Screen.width / 2 + scaleX / 4, 0, 0);
         m_rightBox.rectTransform.sizeDelta = new Vector2(scaleX / 2, 1080);
-        m_rightBox.rectTransform.localPosition = new Vector3(Screen.width/2 - scaleX / 4, 0, 0);
+        m_rightBox.rectTransform.localPosition = new Vector3(Screen.width / 2 - scaleX / 4, 0, 0);
         m_frame = transform.Find("Frame").GetComponent<Text>();
     }
 

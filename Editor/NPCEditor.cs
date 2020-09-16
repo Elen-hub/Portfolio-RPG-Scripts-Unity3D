@@ -186,9 +186,9 @@ public class NPCEditor : EditorWindow
         {
             m_prefabEdit.Reset();
 
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Handle: </color>", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Handle: </color>", m_guiStyle);
             posY += 20;
-            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=black>Please input handle</color>.", m_guiStyle);
+            EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "<color=white>Please input handle</color>.", m_guiStyle);
             posY += 20;
             SearchList(ref posY);
         }

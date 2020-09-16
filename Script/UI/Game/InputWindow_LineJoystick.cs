@@ -34,11 +34,12 @@ public class InputWindow_LineJoystick : MonoBehaviour, IPointerUpHandler, IPoint
     public void Disabled()
     {
         m_isDown = false;
+        // NetworkMng.Instance.NotifyCharacterState_Idle();
         m_buttonImg.rectTransform.localPosition = Vector2.zero;
         m_buttonImg.enabled = false;
         m_currButtonImg.enabled = false;
         SetJoystickButtonAnchor(Vector2.zero);
-        // m_character.State = BaseCharacter.CharacterState.Idle;
+        m_character.State = BaseCharacter.CharacterState.Idle;
         gameObject.SetActive(false);
     }
     public void OnPointerDown(PointerEventData eventData)
@@ -113,6 +114,8 @@ public class InputWindow_LineJoystick : MonoBehaviour, IPointerUpHandler, IPoint
                         m_character.State = BaseCharacter.CharacterState.Move;
                     }
                 }
+
+                Debug.Log("Input");
             }
         }
     }
