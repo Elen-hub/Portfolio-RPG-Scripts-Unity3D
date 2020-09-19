@@ -1,7 +1,5 @@
 # Portfolio-RPG-Scripts-Unity3D
 
-VideoURL: https://blog.naver.com/telleporter/222070825306
-
 Editor/ 커스텀 에디터
 
 Script/ 인게임 스크립트
