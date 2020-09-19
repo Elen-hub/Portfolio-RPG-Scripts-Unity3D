@@ -89,9 +89,6 @@ public class NPCUI : BaseUI
         // 현제 진행중인 퀘스트의 클리어조건이 해당 NPC 만남이거나 클리어조건이 완료될때
         foreach (Quest Quest in CharacterMng.Instance.CurrQuest.Values)
         {
-            m_name.text = npc.StatSystem.Name;
-            m_script.text = null;
-            m_touch = false;
             if (Quest.CurrQuest == null)
                 break;
             if (Quest.CurrQuest.ClearNPCHandle == npc.Handle)
@@ -104,9 +101,9 @@ public class NPCUI : BaseUI
                     case EQuestClearType.Collect:
                         ClearHandle = Quest.CurrQuest.ClearHandle;
                         int ClearValue = Quest.CurrQuest.ClearValue;
-                        if (ItemMng.Instance.GetItemInInventory(ClearHandle) != null)
+                        if (ItemMng.Instance.FindItemInInventory(ClearHandle) != null)
                         {
-                            if(ClearValue <= (ItemMng.Instance.GetItemInInventory(ClearHandle) as IItemNumber).Number)
+                            if(ClearValue <= (ItemMng.Instance.FindItemInInventory(ClearHandle) as IItemNumber).Number)
                             {
                                 m_quest = Quest;
                                 m_scriptsQueue = new Queue<string>(Quest.CurrQuest.ClearScripts);

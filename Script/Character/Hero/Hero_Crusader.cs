@@ -99,11 +99,11 @@ public class Hero_Crusader : BaseHero
                         State = CharacterState.Death;
                         Animator.Play("Death");
                         NetworkMng.Instance.NotifyCharacterState_Skill(transform.eulerAngles, 56);
+                        return;
                     }
                 }
-                else 
-                    StartCoroutine(DeathAction());
             }
+            StartCoroutine(DeathAction());
         }
 
         //if(transform.tag == "Player")

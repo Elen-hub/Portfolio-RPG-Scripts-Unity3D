@@ -617,6 +617,36 @@ Arena_Server.Marshaler.Write(__msg, isSuccess);
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_ReplyItemSellNumber, Common.ReplyItemSellNumber);
 }
+public bool ReplyItemProduce(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode)
+{
+	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
+		__msg.SimplePacketMode = core.IsSimplePacketMode();
+		Nettention.Proud.RmiID __msgid= Common.ReplyItemProduce;
+		__msg.Write(__msgid);
+		Arena_Server.Marshaler.Write(__msg, isSuccess);
+		Arena_Server.Marshaler.Write(__msg, produceHandle);
+		Arena_Server.Marshaler.Write(__msg, errorCode);
+		
+	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
+	__list[0] = remote;
+		
+	return RmiSend(__list,rmiContext,__msg,
+		RmiName_ReplyItemProduce, Common.ReplyItemProduce);
+}
+
+public bool ReplyItemProduce(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode)
+{
+	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
+__msg.SimplePacketMode = core.IsSimplePacketMode();
+Nettention.Proud.RmiID __msgid= Common.ReplyItemProduce;
+__msg.Write(__msgid);
+Arena_Server.Marshaler.Write(__msg, isSuccess);
+Arena_Server.Marshaler.Write(__msg, produceHandle);
+Arena_Server.Marshaler.Write(__msg, errorCode);
+		
+	return RmiSend(remotes,rmiContext,__msg,
+		RmiName_ReplyItemProduce, Common.ReplyItemProduce);
+}
 public bool ReplyInventorySort(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
@@ -963,6 +993,7 @@ public const string RmiName_ReplyItemDelete="ReplyItemDelete";
 public const string RmiName_ReplyItemDeleteNumber="ReplyItemDeleteNumber";
 public const string RmiName_ReplyItemSell="ReplyItemSell";
 public const string RmiName_ReplyItemSellNumber="ReplyItemSellNumber";
+public const string RmiName_ReplyItemProduce="ReplyItemProduce";
 public const string RmiName_ReplyInventorySort="ReplyInventorySort";
 public const string RmiName_ReplyQuestAccept="ReplyQuestAccept";
 public const string RmiName_ReplyQuestDelete="ReplyQuestDelete";
@@ -990,6 +1021,7 @@ public const string RmiName_ReplyItemDelete="";
 public const string RmiName_ReplyItemDeleteNumber="";
 public const string RmiName_ReplyItemSell="";
 public const string RmiName_ReplyItemSellNumber="";
+public const string RmiName_ReplyItemProduce="";
 public const string RmiName_ReplyInventorySort="";
 public const string RmiName_ReplyQuestAccept="";
 public const string RmiName_ReplyQuestDelete="";

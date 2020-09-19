@@ -69,8 +69,8 @@ public class QuestBTN : MonoBehaviour
                 case EQuestClearType.Collect:
                     ClearHandle = m_quest.CurrQuest.ClearHandle;
                     int ClearValue = m_quest.CurrQuest.ClearValue;
-                    if (ItemMng.Instance.GetItemInInventory(ClearHandle) != null)
-                        if (ClearValue <= (ItemMng.Instance.GetItemInInventory(ClearHandle) as IItemNumber).Number)
+                    if (ItemMng.Instance.FindItemInInventory(ClearHandle) != null)
+                        if (ClearValue <= (ItemMng.Instance.FindItemInInventory(ClearHandle) as IItemNumber).Number)
                         {
                             m_mainText.text = "<b><color=#FFFF00>[완료가능] </color></b>" + m_quest.Name;
                             state = EQuestState.PossibleClear;

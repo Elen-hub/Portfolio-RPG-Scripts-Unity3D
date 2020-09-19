@@ -819,6 +819,11 @@ public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Pro
 		{ 
 			return false;
 		};
+		public delegate bool RequestItemProduceDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int handle);  
+		public RequestItemProduceDelegate RequestItemProduce = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int handle)
+		{ 
+			return false;
+		};
 		public delegate bool RequestInvenvorySortDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext);  
 		public RequestInvenvorySortDelegate RequestInvenvorySort = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext)
 		{ 
@@ -906,6 +911,9 @@ public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Pro
             break;
         case Common.RequestItemSellNumber:
             ProcessReceivedMessage_RequestItemSellNumber(__msg, pa, hostTag, remote);
+            break;
+        case Common.RequestItemProduce:
+            ProcessReceivedMessage_RequestItemProduce(__msg, pa, hostTag, remote);
             break;
         case Common.RequestInvenvorySort:
             ProcessReceivedMessage_RequestInvenvorySort(__msg, pa, hostTag, remote);
@@ -1400,6 +1408,56 @@ parameterString+=number.ToString()+",";
         AfterRmiInvocation(summary);
         }
     }
+    void ProcessReceivedMessage_RequestItemProduce(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
+    {
+        Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
+        ctx.sentFrom=pa.RemoteHostID;
+        ctx.relayed=pa.IsRelayed;
+        ctx.hostTag=hostTag;
+        ctx.encryptMode = pa.EncryptMode;
+        ctx.compressMode = pa.CompressMode;
+
+        int handle; Arena_Server.Marshaler.Read(__msg,out handle);	
+core.PostCheckReadMessage(__msg, RmiName_RequestItemProduce);
+        if(enableNotifyCallFromStub==true)
+        {
+        string parameterString = "";
+        parameterString+=handle.ToString()+",";
+        NotifyCallFromStub(Common.RequestItemProduce, RmiName_RequestItemProduce,parameterString);
+        }
+
+        if(enableStubProfiling)
+        {
+        Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
+        summary.rmiID = Common.RequestItemProduce;
+        summary.rmiName = RmiName_RequestItemProduce;
+        summary.hostID = remote;
+        summary.hostTag = hostTag;
+        BeforeRmiInvocation(summary);
+        }
+
+        long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
+
+        // Call this method.
+        bool __ret =RequestItemProduce (remote,ctx , handle );
+
+        if(__ret==false)
+        {
+        // Error: RMI function that a user did not create has been called. 
+        core.ShowNotImplementedRmiWarning(RmiName_RequestItemProduce);
+        }
+
+        if(enableStubProfiling)
+        {
+        Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
+        summary.rmiID = Common.RequestItemProduce;
+        summary.rmiName = RmiName_RequestItemProduce;
+        summary.hostID = remote;
+        summary.hostTag = hostTag;
+        summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
+        AfterRmiInvocation(summary);
+        }
+    }
     void ProcessReceivedMessage_RequestInvenvorySort(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
     {
         Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
@@ -1866,6 +1924,7 @@ public const string RmiName_RequestItemDelete="RequestItemDelete";
 public const string RmiName_RequestItemDeleteNumber="RequestItemDeleteNumber";
 public const string RmiName_RequestItemSell="RequestItemSell";
 public const string RmiName_RequestItemSellNumber="RequestItemSellNumber";
+public const string RmiName_RequestItemProduce="RequestItemProduce";
 public const string RmiName_RequestInvenvorySort="RequestInvenvorySort";
 public const string RmiName_RequestQuestAccept="RequestQuestAccept";
 public const string RmiName_RequestQuestDelete="RequestQuestDelete";
@@ -1889,6 +1948,7 @@ public const string RmiName_RequestItemDelete="";
 public const string RmiName_RequestItemDeleteNumber="";
 public const string RmiName_RequestItemSell="";
 public const string RmiName_RequestItemSellNumber="";
+public const string RmiName_RequestItemProduce="";
 public const string RmiName_RequestInvenvorySort="";
 public const string RmiName_RequestQuestAccept="";
 public const string RmiName_RequestQuestDelete="";

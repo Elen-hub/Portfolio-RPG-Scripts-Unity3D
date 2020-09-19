@@ -843,6 +843,11 @@ public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Pro
 		{ 
 			return false;
 		};
+		public delegate bool ReplyItemProduceDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode);  
+		public ReplyItemProduceDelegate ReplyItemProduce = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode)
+		{ 
+			return false;
+		};
 		public delegate bool ReplyInventorySortDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess);  
 		public ReplyInventorySortDelegate ReplyInventorySort = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, bool isSuccess)
 		{ 
@@ -950,6 +955,9 @@ public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Pro
             break;
         case Common.ReplyItemSellNumber:
             ProcessReceivedMessage_ReplyItemSellNumber(__msg, pa, hostTag, remote);
+            break;
+        case Common.ReplyItemProduce:
+            ProcessReceivedMessage_ReplyItemProduce(__msg, pa, hostTag, remote);
             break;
         case Common.ReplyInventorySort:
             ProcessReceivedMessage_ReplyInventorySort(__msg, pa, hostTag, remote);
@@ -1444,6 +1452,60 @@ core.PostCheckReadMessage(__msg, RmiName_ReplyItemSellNumber);
         Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
         summary.rmiID = Common.ReplyItemSellNumber;
         summary.rmiName = RmiName_ReplyItemSellNumber;
+        summary.hostID = remote;
+        summary.hostTag = hostTag;
+        summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
+        AfterRmiInvocation(summary);
+        }
+    }
+    void ProcessReceivedMessage_ReplyItemProduce(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
+    {
+        Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
+        ctx.sentFrom=pa.RemoteHostID;
+        ctx.relayed=pa.IsRelayed;
+        ctx.hostTag=hostTag;
+        ctx.encryptMode = pa.EncryptMode;
+        ctx.compressMode = pa.CompressMode;
+
+        bool isSuccess; Arena_Server.Marshaler.Read(__msg,out isSuccess);	
+int produceHandle; Arena_Server.Marshaler.Read(__msg,out produceHandle);	
+int errorCode; Arena_Server.Marshaler.Read(__msg,out errorCode);	
+core.PostCheckReadMessage(__msg, RmiName_ReplyItemProduce);
+        if(enableNotifyCallFromStub==true)
+        {
+        string parameterString = "";
+        parameterString+=isSuccess.ToString()+",";
+parameterString+=produceHandle.ToString()+",";
+parameterString+=errorCode.ToString()+",";
+        NotifyCallFromStub(Common.ReplyItemProduce, RmiName_ReplyItemProduce,parameterString);
+        }
+
+        if(enableStubProfiling)
+        {
+        Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
+        summary.rmiID = Common.ReplyItemProduce;
+        summary.rmiName = RmiName_ReplyItemProduce;
+        summary.hostID = remote;
+        summary.hostTag = hostTag;
+        BeforeRmiInvocation(summary);
+        }
+
+        long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
+
+        // Call this method.
+        bool __ret =ReplyItemProduce (remote,ctx , isSuccess, produceHandle, errorCode );
+
+        if(__ret==false)
+        {
+        // Error: RMI function that a user did not create has been called. 
+        core.ShowNotImplementedRmiWarning(RmiName_ReplyItemProduce);
+        }
+
+        if(enableStubProfiling)
+        {
+        Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
+        summary.rmiID = Common.ReplyItemProduce;
+        summary.rmiName = RmiName_ReplyItemProduce;
         summary.hostID = remote;
         summary.hostTag = hostTag;
         summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
@@ -2108,6 +2170,7 @@ public const string RmiName_ReplyItemDelete="ReplyItemDelete";
 public const string RmiName_ReplyItemDeleteNumber="ReplyItemDeleteNumber";
 public const string RmiName_ReplyItemSell="ReplyItemSell";
 public const string RmiName_ReplyItemSellNumber="ReplyItemSellNumber";
+public const string RmiName_ReplyItemProduce="ReplyItemProduce";
 public const string RmiName_ReplyInventorySort="ReplyInventorySort";
 public const string RmiName_ReplyQuestAccept="ReplyQuestAccept";
 public const string RmiName_ReplyQuestDelete="ReplyQuestDelete";
@@ -2135,6 +2198,7 @@ public const string RmiName_ReplyItemDelete="";
 public const string RmiName_ReplyItemDeleteNumber="";
 public const string RmiName_ReplyItemSell="";
 public const string RmiName_ReplyItemSellNumber="";
+public const string RmiName_ReplyItemProduce="";
 public const string RmiName_ReplyInventorySort="";
 public const string RmiName_ReplyQuestAccept="";
 public const string RmiName_ReplyQuestDelete="";

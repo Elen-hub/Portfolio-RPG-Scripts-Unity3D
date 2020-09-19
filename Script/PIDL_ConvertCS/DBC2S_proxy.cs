@@ -599,6 +599,32 @@ Arena_Server.Marshaler.Write(__msg, number);
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_RequestItemSellNumber, Common.RequestItemSellNumber);
 }
+public bool RequestItemProduce(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int handle)
+{
+	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
+		__msg.SimplePacketMode = core.IsSimplePacketMode();
+		Nettention.Proud.RmiID __msgid= Common.RequestItemProduce;
+		__msg.Write(__msgid);
+		Arena_Server.Marshaler.Write(__msg, handle);
+		
+	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
+	__list[0] = remote;
+		
+	return RmiSend(__list,rmiContext,__msg,
+		RmiName_RequestItemProduce, Common.RequestItemProduce);
+}
+
+public bool RequestItemProduce(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int handle)
+{
+	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
+__msg.SimplePacketMode = core.IsSimplePacketMode();
+Nettention.Proud.RmiID __msgid= Common.RequestItemProduce;
+__msg.Write(__msgid);
+Arena_Server.Marshaler.Write(__msg, handle);
+		
+	return RmiSend(remotes,rmiContext,__msg,
+		RmiName_RequestItemProduce, Common.RequestItemProduce);
+}
 public bool RequestInvenvorySort(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
@@ -849,6 +875,7 @@ public const string RmiName_RequestItemDelete="RequestItemDelete";
 public const string RmiName_RequestItemDeleteNumber="RequestItemDeleteNumber";
 public const string RmiName_RequestItemSell="RequestItemSell";
 public const string RmiName_RequestItemSellNumber="RequestItemSellNumber";
+public const string RmiName_RequestItemProduce="RequestItemProduce";
 public const string RmiName_RequestInvenvorySort="RequestInvenvorySort";
 public const string RmiName_RequestQuestAccept="RequestQuestAccept";
 public const string RmiName_RequestQuestDelete="RequestQuestDelete";
@@ -872,6 +899,7 @@ public const string RmiName_RequestItemDelete="";
 public const string RmiName_RequestItemDeleteNumber="";
 public const string RmiName_RequestItemSell="";
 public const string RmiName_RequestItemSellNumber="";
+public const string RmiName_RequestItemProduce="";
 public const string RmiName_RequestInvenvorySort="";
 public const string RmiName_RequestQuestAccept="";
 public const string RmiName_RequestQuestDelete="";

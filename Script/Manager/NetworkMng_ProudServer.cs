@@ -466,8 +466,11 @@ public partial class NetworkMng : TSingleton<NetworkMng>
                 {
                     PlayerMng.Instance.AddExp(PlayerMng.Instance.MainPlayer, rewordEXP);
                 }
+                SQuestReword[] reword = CharacterMng.Instance.CurrQuest[handle].CurrQuest.Reword.ToArray();
+                if(reword.Length > 0)
+                    UIMng.Instance.Open<SelectPopup>(UIMng.UIName.SelectPopup).RewordPopup.Enabled(rewordEXP, reword);
+
                 CharacterMng.Instance.CompleteQuest(handle);
-                UIMng.Instance.Open<SelectPopup>(UIMng.UIName.SelectPopup).RewordPopup.Enabled(rewordEXP, CharacterMng.Instance.CurrQuest[handle].CurrQuest.Reword.ToArray());
                 UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(npc);
             }
             return true;
@@ -616,6 +619,21 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         {
             UIMng.Instance.CLOSE = UIMng.UIName.Loading;
             if (isSuccess) ItemMng.Instance.RemoveItem(inventoryNum, number);
+            return true;
+        };
+    }
+    public void RequestProduceItem(int handle)
+    {
+        UIMng.Instance.OPEN = UIMng.UIName.Loading;
+        m_alterProxy.RequestItemProduce(HostID.HostID_Server, RmiContext.ReliableSend, handle);
+        m_alterStub.ReplyItemProduce = (Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode) =>
+        {
+            UIMng.Instance.CLOSE = UIMng.UIName.Loading;
+            Debug.Log(isSuccess);
+            if (isSuccess)
+            {
+                ItemMng.Instance.GetItemProduceFormula(produceHandle);
+            }
             return true;
         };
     }
@@ -827,8 +845,6 @@ public partial class NetworkMng : TSingleton<NetworkMng>
                 PlayerMng.Instance.MainPlayer.Character.MoveSystem.SetPosition = pos;
                 if (PlayerMng.Instance.MainPlayer.Character.State == BaseCharacter.CharacterState.Death)
                     StartCoroutine(PlayerMng.Instance.MainPlayer.Character.RevivalAfterTime(5));
-                else
-                    Debug.Log(PlayerMng.Instance.MainPlayer.Character.State);
             }
             else
             {

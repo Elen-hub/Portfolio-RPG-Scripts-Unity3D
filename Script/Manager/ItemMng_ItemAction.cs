@@ -115,4 +115,17 @@ public partial class ItemMng : TSingleton<ItemMng>
                 CoolTimeList.RemoveAt(i);
         }
     }
+    void ItemActionInit()
+    {
+        m_activeActionDic.Add(EItemActiveType.RecoveryStaticHP, RecoveryStaticHP);
+        m_activeActionDic.Add(EItemActiveType.RecoveryStaticMP, RecoveryStaticMP);
+        m_activeActionDic.Add(EItemActiveType.RecoveryDynamicHP, RecoveryDynamicHP);
+        m_activeActionDic.Add(EItemActiveType.RecoveryDynamicMP, RecoveryDynamicMP);
+        m_activeActionDic.Add(EItemActiveType.RecycleHP, RecycleHP);
+        m_activeActionDic.Add(EItemActiveType.RecycleMP, RecycleMP);
+        m_activeActionDic.Add(EItemActiveType.ReturnSelectTown, ReturnSelectTown);
+        m_activeActionDic.Add(EItemActiveType.LevelUp, LevelUp);
+        m_activeActionDic.Add(EItemActiveType.SkillPointUp, SkillPointUp);
+        m_activeActionDic.Add(EItemActiveType.StatPointUp, StatPointUp);
+    }
 }

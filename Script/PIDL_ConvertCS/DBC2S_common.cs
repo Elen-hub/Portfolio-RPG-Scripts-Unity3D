@@ -64,15 +64,16 @@ namespace DB_Alter_C2S
 			public const Nettention.Proud.RmiID RequestItemDeleteNumber = (Nettention.Proud.RmiID)200+7;
 			public const Nettention.Proud.RmiID RequestItemSell = (Nettention.Proud.RmiID)200+8;
 			public const Nettention.Proud.RmiID RequestItemSellNumber = (Nettention.Proud.RmiID)200+9;
-			public const Nettention.Proud.RmiID RequestInvenvorySort = (Nettention.Proud.RmiID)200+10;
-			public const Nettention.Proud.RmiID RequestQuestAccept = (Nettention.Proud.RmiID)200+11;
-			public const Nettention.Proud.RmiID RequestQuestDelete = (Nettention.Proud.RmiID)200+12;
-			public const Nettention.Proud.RmiID RequestQuestClear = (Nettention.Proud.RmiID)200+13;
-			public const Nettention.Proud.RmiID RequestStatusUseStatPoint = (Nettention.Proud.RmiID)200+14;
-			public const Nettention.Proud.RmiID RequestStatusUseSkillPoint = (Nettention.Proud.RmiID)200+15;
-			public const Nettention.Proud.RmiID RequestDeleteQuickSlot = (Nettention.Proud.RmiID)200+16;
-			public const Nettention.Proud.RmiID RequestSetQuickSlot = (Nettention.Proud.RmiID)200+17;
-			public const Nettention.Proud.RmiID RequestGetCoupon = (Nettention.Proud.RmiID)200+18;
+			public const Nettention.Proud.RmiID RequestItemProduce = (Nettention.Proud.RmiID)200+10;
+			public const Nettention.Proud.RmiID RequestInvenvorySort = (Nettention.Proud.RmiID)200+11;
+			public const Nettention.Proud.RmiID RequestQuestAccept = (Nettention.Proud.RmiID)200+12;
+			public const Nettention.Proud.RmiID RequestQuestDelete = (Nettention.Proud.RmiID)200+13;
+			public const Nettention.Proud.RmiID RequestQuestClear = (Nettention.Proud.RmiID)200+14;
+			public const Nettention.Proud.RmiID RequestStatusUseStatPoint = (Nettention.Proud.RmiID)200+15;
+			public const Nettention.Proud.RmiID RequestStatusUseSkillPoint = (Nettention.Proud.RmiID)200+16;
+			public const Nettention.Proud.RmiID RequestDeleteQuickSlot = (Nettention.Proud.RmiID)200+17;
+			public const Nettention.Proud.RmiID RequestSetQuickSlot = (Nettention.Proud.RmiID)200+18;
+			public const Nettention.Proud.RmiID RequestGetCoupon = (Nettention.Proud.RmiID)200+19;
 		// List that has RMI ID.
 		public static Nettention.Proud.RmiID[] RmiIDList = new Nettention.Proud.RmiID[] {
 			RequestItemBuy,
@@ -84,6 +85,7 @@ namespace DB_Alter_C2S
 			RequestItemDeleteNumber,
 			RequestItemSell,
 			RequestItemSellNumber,
+			RequestItemProduce,
 			RequestInvenvorySort,
 			RequestQuestAccept,
 			RequestQuestDelete,

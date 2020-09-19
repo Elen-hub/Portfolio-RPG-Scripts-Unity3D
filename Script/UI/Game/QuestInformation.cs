@@ -90,9 +90,9 @@ public class QuestInformation : BaseUI
                 case EQuestClearType.Collect:
                     int CurrValue = 0;
 
-                    if (ItemMng.Instance.GetItemInInventory(ClearHandle) != null)
+                    if (ItemMng.Instance.FindItemInInventory(ClearHandle) != null)
                     {
-                        CurrValue = (ItemMng.Instance.GetItemInInventory(ClearHandle) as IItemNumber).Number;
+                        CurrValue = (ItemMng.Instance.FindItemInInventory(ClearHandle) as IItemNumber).Number;
 
                         if (ClearValue <= CurrValue)
                             state = EQuestState.PossibleClear;

@@ -114,8 +114,6 @@ public class InputWindow_LineJoystick : MonoBehaviour, IPointerUpHandler, IPoint
                         m_character.State = BaseCharacter.CharacterState.Move;
                     }
                 }
-
-                Debug.Log("Input");
             }
         }
     }

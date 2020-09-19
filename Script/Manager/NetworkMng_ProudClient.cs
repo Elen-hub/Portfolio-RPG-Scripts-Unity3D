@@ -81,7 +81,6 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         RmiContext rmi = RmiContext.ReliableSend;
         rmi.enableLoopback = true;
 
-        Debug.Log("RequestSkill");
         m_behaviorP2PProxy.NotifyCharacterSkill(m_groupID, rmi, dir, skillHandle);
     }
     public void NotifyCharacterState_SkillEnd(UnityEngine.Vector3 dir, int skillHandle)

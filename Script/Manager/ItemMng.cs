@@ -21,7 +21,7 @@ public partial class ItemMng : TSingleton<ItemMng>
         }
         ItemObjectList.Clear();
     }
-    public Item_Base GetItemInInventory(int handle)
+    public Item_Base FindItemInInventory(int handle)
     {
         for (int i = 0; i < Inventory.Count; ++i)
             if (Inventory[i].Handle == handle)
@@ -45,15 +45,6 @@ public partial class ItemMng : TSingleton<ItemMng>
             else
                 return 1;
         }
-    }
-    public Item_Base FindItem(int handle)
-    {
-        for (int i = 0; i < Inventory.Count; ++i)
-        {
-            if (Inventory[i].Handle == handle)
-                return Inventory[i];
-        }
-        return null;
     }
     public void GetItem(int uniqueID, BaseCharacter character, bool isAddItem)
     {
@@ -174,16 +165,9 @@ public partial class ItemMng : TSingleton<ItemMng>
     }
     public override void Init()
     {
-        m_activeActionDic.Add(EItemActiveType.RecoveryStaticHP, RecoveryStaticHP);
-        m_activeActionDic.Add(EItemActiveType.RecoveryStaticMP, RecoveryStaticMP);
-        m_activeActionDic.Add(EItemActiveType.RecoveryDynamicHP, RecoveryDynamicHP);
-        m_activeActionDic.Add(EItemActiveType.RecoveryDynamicMP, RecoveryDynamicMP);
-        m_activeActionDic.Add(EItemActiveType.RecycleHP, RecycleHP);
-        m_activeActionDic.Add(EItemActiveType.RecycleMP, RecycleMP);
-        m_activeActionDic.Add(EItemActiveType.ReturnSelectTown, ReturnSelectTown);
-        m_activeActionDic.Add(EItemActiveType.LevelUp, LevelUp);
-        m_activeActionDic.Add(EItemActiveType.SkillPointUp, SkillPointUp);
-        m_activeActionDic.Add(EItemActiveType.StatPointUp, StatPointUp);
+        ItemActionInit();
+        ItemProduceInit();
+
 #if UNITY_EDITOR
         TextAsset Asset = new TextAsset(System.IO.File.ReadAllText("Assets/AssetBundle_Database/DB_Item.json"));
         JSONNode Node = JSON.Parse(Asset.text);
@@ -265,7 +249,6 @@ public partial class ItemMng : TSingleton<ItemMng>
                     SkillDamagePro = float.Parse(Node[i]["SkillDamagePro"])
                 };
             }
-
             m_itemDic.Add(Item.Handle, Item);
         }
 

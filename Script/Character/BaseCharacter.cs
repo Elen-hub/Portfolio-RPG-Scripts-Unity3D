@@ -25,11 +25,11 @@ public abstract class BaseCharacter : MonoBehaviour
     [Header("Info")]
     public int UniqueID;
     public EAllyType AllyType;
+    [SerializeField] CharacterState m_state;
 
     BaseEffect m_stunEffect;
     public BaseCharacter Target;
     [HideInInspector] public ChatBox ChatBox;
-    public CharacterState State;
     [HideInInspector] public Animator Animator;
 
     [HideInInspector] public AttackSystem AttackSystem;
@@ -42,6 +42,11 @@ public abstract class BaseCharacter : MonoBehaviour
     protected Dictionary<CharacterState, CharacterBehaviour> m_actionDic = new Dictionary<CharacterState, CharacterBehaviour>();
 
     [HideInInspector] public float m_recoveryElapsedTime;
+    public virtual CharacterState State
+    {
+        get { return m_state; }
+        set { if (m_state != CharacterState.Death) m_state = value; }
+    }
     public virtual void SetAngle(float angle) { }
     protected abstract void Idle();
     protected abstract void Move();
@@ -54,7 +59,7 @@ public abstract class BaseCharacter : MonoBehaviour
         Animator.Play("Revive");
         StatSystem.CurrHP = hp;
         StatSystem.CurrMP = mp;
-        State = CharacterState.Idle;
+        m_state = CharacterState.Idle;
         MoveSystem.Stop = false;
     }
     [Header("Status")]
@@ -71,7 +76,7 @@ public abstract class BaseCharacter : MonoBehaviour
     float m_stunElapsedTime;
     public void SetHit(float time)
     {
-        if (AttackSystem.SuperArmor)
+        if (AttackSystem.SuperArmor || State == CharacterState.Death)
             return;
 
         MoveSystem.Stop = true;

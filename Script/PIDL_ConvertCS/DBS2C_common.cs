@@ -64,19 +64,20 @@ namespace DB_Alter_S2C
 			public const Nettention.Proud.RmiID ReplyItemDeleteNumber = (Nettention.Proud.RmiID)1200+7;
 			public const Nettention.Proud.RmiID ReplyItemSell = (Nettention.Proud.RmiID)1200+8;
 			public const Nettention.Proud.RmiID ReplyItemSellNumber = (Nettention.Proud.RmiID)1200+9;
-			public const Nettention.Proud.RmiID ReplyInventorySort = (Nettention.Proud.RmiID)1200+10;
-			public const Nettention.Proud.RmiID ReplyQuestAccept = (Nettention.Proud.RmiID)1200+11;
-			public const Nettention.Proud.RmiID ReplyQuestDelete = (Nettention.Proud.RmiID)1200+12;
-			public const Nettention.Proud.RmiID ReplyQuestClear = (Nettention.Proud.RmiID)1200+13;
-			public const Nettention.Proud.RmiID ReplyStatusGetExp = (Nettention.Proud.RmiID)1200+14;
-			public const Nettention.Proud.RmiID ReplyStatusGetLevel = (Nettention.Proud.RmiID)1200+15;
-			public const Nettention.Proud.RmiID ReplyStatusAddStatPoint = (Nettention.Proud.RmiID)1200+16;
-			public const Nettention.Proud.RmiID ReplyStatusAddSkillPoint = (Nettention.Proud.RmiID)1200+17;
-			public const Nettention.Proud.RmiID ReplyStatusUseStatPoint = (Nettention.Proud.RmiID)1200+18;
-			public const Nettention.Proud.RmiID ReplyStatusUseSkillPoint = (Nettention.Proud.RmiID)1200+19;
-			public const Nettention.Proud.RmiID ReplyDeleteQuickSlot = (Nettention.Proud.RmiID)1200+20;
-			public const Nettention.Proud.RmiID ReplySetQuickSlot = (Nettention.Proud.RmiID)1200+21;
-			public const Nettention.Proud.RmiID ReplyGetCoupon = (Nettention.Proud.RmiID)1200+22;
+			public const Nettention.Proud.RmiID ReplyItemProduce = (Nettention.Proud.RmiID)1200+10;
+			public const Nettention.Proud.RmiID ReplyInventorySort = (Nettention.Proud.RmiID)1200+11;
+			public const Nettention.Proud.RmiID ReplyQuestAccept = (Nettention.Proud.RmiID)1200+12;
+			public const Nettention.Proud.RmiID ReplyQuestDelete = (Nettention.Proud.RmiID)1200+13;
+			public const Nettention.Proud.RmiID ReplyQuestClear = (Nettention.Proud.RmiID)1200+14;
+			public const Nettention.Proud.RmiID ReplyStatusGetExp = (Nettention.Proud.RmiID)1200+15;
+			public const Nettention.Proud.RmiID ReplyStatusGetLevel = (Nettention.Proud.RmiID)1200+16;
+			public const Nettention.Proud.RmiID ReplyStatusAddStatPoint = (Nettention.Proud.RmiID)1200+17;
+			public const Nettention.Proud.RmiID ReplyStatusAddSkillPoint = (Nettention.Proud.RmiID)1200+18;
+			public const Nettention.Proud.RmiID ReplyStatusUseStatPoint = (Nettention.Proud.RmiID)1200+19;
+			public const Nettention.Proud.RmiID ReplyStatusUseSkillPoint = (Nettention.Proud.RmiID)1200+20;
+			public const Nettention.Proud.RmiID ReplyDeleteQuickSlot = (Nettention.Proud.RmiID)1200+21;
+			public const Nettention.Proud.RmiID ReplySetQuickSlot = (Nettention.Proud.RmiID)1200+22;
+			public const Nettention.Proud.RmiID ReplyGetCoupon = (Nettention.Proud.RmiID)1200+23;
 		// List that has RMI ID.
 		public static Nettention.Proud.RmiID[] RmiIDList = new Nettention.Proud.RmiID[] {
 			ReplyItemBuy,
@@ -88,6 +89,7 @@ namespace DB_Alter_S2C
 			ReplyItemDeleteNumber,
 			ReplyItemSell,
 			ReplyItemSellNumber,
+			ReplyItemProduce,
 			ReplyInventorySort,
 			ReplyQuestAccept,
 			ReplyQuestDelete,

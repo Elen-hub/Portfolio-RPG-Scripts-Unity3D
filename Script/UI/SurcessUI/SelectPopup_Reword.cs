@@ -31,7 +31,7 @@ public class SelectPopup_Reword : SelectPopup_Base
             m_text[0].text = gold.ToString();
             IN += 1;
         }
-        for (int i = IN; i < m_itemImg.Length; ++i)
+        for (int i = IN; i < 4; ++i)
         {
             if (reword.Length > i)
             {

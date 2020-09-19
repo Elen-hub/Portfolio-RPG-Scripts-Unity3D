@@ -19,7 +19,7 @@ public class SelectPopup_Revive : SelectPopup_Base
     }
     public void Enabled()
     {
-        Item_Base item = ItemMng.Instance.FindItem(14);
+        Item_Base item = ItemMng.Instance.FindItemInInventory(14);
 
         if (item != null)
             m_number.text = "x" + (item as IItemNumber).Number;
