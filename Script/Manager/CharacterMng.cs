@@ -664,6 +664,13 @@ public class CharacterMng : TSingleton<CharacterMng>
                 for (int j = 0; j < ShopHandle.Length; ++j)
                     stat.ShopHandle.Add(int.Parse(ShopHandle[j]));
             }
+            if (Node[i]["ProduceHandle"])
+            {
+                stat.ProduceList = new List<int>();
+                string[] ProduceHandle = Node[i]["ProduceHandle"].Value.Split(',');
+                for (int j = 0; j < ProduceHandle.Length; ++j)
+                    stat.ProduceList.Add(int.Parse(ProduceHandle[j]));
+            }
             m_npcStat.Add(stat.Handle, stat);
         }
 

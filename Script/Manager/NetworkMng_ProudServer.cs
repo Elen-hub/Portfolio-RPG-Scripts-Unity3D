@@ -629,10 +629,10 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         m_alterStub.ReplyItemProduce = (Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, bool isSuccess, int produceHandle, int errorCode) =>
         {
             UIMng.Instance.CLOSE = UIMng.UIName.Loading;
-            Debug.Log(isSuccess);
             if (isSuccess)
             {
-                ItemMng.Instance.GetItemProduceFormula(produceHandle);
+                SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Main, ItemMng.Instance.GetItemList[ItemMng.Instance.GetItemProduceFormula(produceHandle).Handle].Name + "을(를) 제작하였습니다.");
+                ItemMng.Instance.GetItemProduceFormula(produceHandle).ProduceItem();
             }
             return true;
         };

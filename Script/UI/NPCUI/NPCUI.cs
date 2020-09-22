@@ -16,6 +16,7 @@ public class NPCUI : BaseUI
         Complete = 16,
         Negative = 32,
         Train = 64,
+        Produce = 128,
     }
 
     Quest m_quest;
@@ -23,6 +24,7 @@ public class NPCUI : BaseUI
     public NPCUI_Shop ShopUI;
     public NPCUI_Quest QuestUI;
     public NPCUI_Train TrainUI;
+    public NPCUI_ItemProduce ProduceUI;
 
     GameObject m_acceptBTN;
     GameObject m_cancleBTN;
@@ -31,6 +33,7 @@ public class NPCUI : BaseUI
     GameObject m_completeBTN;
     GameObject m_negativeBTN;
     GameObject m_trainBTN;
+    GameObject m_produceBTN;
 
     Queue<string> m_scriptsQueue = new Queue<string>();
     BaseNPC m_npc;
@@ -57,6 +60,8 @@ public class NPCUI : BaseUI
         m_negativeBTN.GetComponent<Button>().onClick.AddListener(OnClickNegative);
         m_trainBTN = ButtonGrid.Find("Train").gameObject;
         m_trainBTN.GetComponent<Button>().onClick.AddListener(OnClickTrain);
+        m_produceBTN = ButtonGrid.Find("ItemProduce").gameObject;
+        m_produceBTN.GetComponent<Button>().onClick.AddListener(OnClickProduce);
 
         ShopUI = GetComponentInChildren<NPCUI_Shop>();
         ShopUI.Init();
@@ -64,12 +69,15 @@ public class NPCUI : BaseUI
         QuestUI.Init();
         TrainUI = GetComponentInChildren<NPCUI_Train>();
         TrainUI.Init();
+        ProduceUI = GetComponentInChildren<NPCUI_ItemProduce>();
+        ProduceUI.Init();
     }
     public void Enabled(Quest quest)
     {
         ShopUI.Close();
         QuestUI.Close();
         TrainUI.Close();
+        ProduceUI.Close();
 
         m_script.text = null;
         m_touch = false;
@@ -148,6 +156,7 @@ public class NPCUI : BaseUI
         m_completeBTN.SetActive((option & ENpcButtonOption.Complete) != 0);
         m_negativeBTN.SetActive((option & ENpcButtonOption.Negative) != 0);
         m_trainBTN.SetActive((option & ENpcButtonOption.Train) != 0);
+        m_produceBTN.SetActive((option & ENpcButtonOption.Produce) != 0);
     }
     public void ShowButton(ENpcOption option)
     {
@@ -157,12 +166,14 @@ public class NPCUI : BaseUI
         m_negativeBTN.SetActive(false);
         m_shopBTN.SetActive((option & ENpcOption.Shop) != 0);
         m_trainBTN.SetActive((option & ENpcOption.Train) != 0);
+        m_produceBTN.SetActive((option & ENpcOption.Produce) != 0);
     }
     public override void Close()
     {
         ShopUI.Close();
         QuestUI.Close();
         TrainUI.Close();
+        ProduceUI.Close();
         m_scriptsQueue.Clear();
         m_quest = null;
         m_npc = null;
@@ -182,6 +193,10 @@ public class NPCUI : BaseUI
     {
         TrainUI.Enabled(m_npc.StatSystem.TrainHandle);
         ShopUI.Enabled(m_npc.StatSystem.ShopHandle);
+    }
+    void OnClickProduce()
+    {
+        ProduceUI.Enabled(m_npc.StatSystem.ProduceList);
     }
     IEnumerator ReadScript(bool isClear)
     {

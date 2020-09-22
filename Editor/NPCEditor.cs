@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using SimpleJSON;
+using UnityEditor.Graphs;
 
 public class NPCEditor : EditorWindow
 {
@@ -27,8 +28,9 @@ public class NPCEditor : EditorWindow
         m_window.minSize = new Vector2(400, 800);
         m_guiStyle = new GUIStyle();
         m_guiStyle.richText = true;
+        m_guiStyle.normal.textColor = Color.grey;
 
-        if(m_prefabEdit ==null)
+        if (m_prefabEdit ==null)
             m_prefabEdit = ScriptableObject.CreateInstance(typeof(PrefabEdit)) as PrefabEdit;
 
         EditorDB.Init();
@@ -50,16 +52,16 @@ public class NPCEditor : EditorWindow
         switch (m_toolbarIndex)
         {
             case 0:
-                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "Name", m_guiStyle);
+                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "Name");
                 m_stat.Name = EditorGUI.TextField(new Rect(m_windowSize / 2, posY, m_windowSize / 2, 20), m_stat.Name);
                 posY += 20;
-                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "MoveSpeed", m_guiStyle);
+                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "MoveSpeed");
                 m_stat.MoveSpeed = EditorGUI.FloatField(new Rect(m_windowSize / 2, posY, m_windowSize / 2, 20), m_stat.MoveSpeed);
                 posY += 20;
                 m_stat = m_prefabEdit.InputPrefab(ref posY, m_stat, m_windowSize, m_guiStyle, "Assets/AssetBundle_Character/Hero", m_stat.Path);
                 break;
             case 1:
-                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "Option", m_guiStyle);
+                EditorGUI.LabelField(new Rect(0, posY, m_windowSize / 2, 20), "Option");
                 m_stat.Option = (ENpcOption)EditorGUI.EnumFlagsField(new Rect(m_windowSize / 2, posY, m_windowSize / 2, 20), m_stat.Option);
                 posY += 30;
                 if((m_stat.Option & ENpcOption.Shop) != 0)
@@ -67,7 +69,7 @@ public class NPCEditor : EditorWindow
                     if (m_stat.ShopHandle == null)
                         m_stat.ShopHandle = new List<int>();
 
-                    EditorGUI.LabelField(new Rect(30+m_windowSize/2, posY, m_windowSize / 2, 20), "ShopList", m_guiStyle);
+                    EditorGUI.LabelField(new Rect(30+m_windowSize/2, posY, m_windowSize / 2, 20), "ShopList");
                     if (GUI.Button(new Rect(0, posY, 20, 20), "+"))
                         m_stat.ShopHandle.Add(0);
 
@@ -78,7 +80,7 @@ public class NPCEditor : EditorWindow
                         if(EditorDB.ItemDic.ContainsKey(m_stat.ShopHandle[i]))
                             EditorGUI.LabelField(new Rect(m_windowSize / 2-20, posY, m_windowSize / 2, 20), EditorDB.ItemDic[m_stat.ShopHandle[i]].Name, m_guiStyle);
                         else
-                            EditorGUI.LabelField(new Rect(m_windowSize / 2 - 20, posY, m_windowSize / 2, 20), "Item is null", m_guiStyle);
+                            EditorGUI.LabelField(new Rect(m_windowSize / 2 - 20, posY, m_windowSize / 2, 20), "Item is null");
                       
                         if (GUI.Button(new Rect(m_windowSize - 20, posY, 20, 20), "-"))
                             m_stat.ShopHandle.RemoveAt(i);
@@ -86,12 +88,58 @@ public class NPCEditor : EditorWindow
                         posY += 20;
                     }
                 }
+                if ((m_stat.Option & ENpcOption.Produce) != 0)
+                {
+                    if (m_stat.ProduceList == null)
+                        m_stat.ProduceList = new List<int>();
+
+                    EditorGUI.LabelField(new Rect(0, posY, m_windowSize, 20), "ItemProduce ___________________________________________________________");
+                    posY += 25;
+                    for(int i =0; i<m_stat.ProduceList.Count; ++i)
+                    {
+                        float posX = 0;
+                        EditorGUI.LabelField(new Rect(0, posY, 80, 20), "Handle: ");
+                        posX += 80;
+                        m_stat.ProduceList[i] = EditorGUI.IntField(new Rect(posX, posY, m_windowSize / 4, 20), m_stat.ProduceList[i]);
+                        posX += m_windowSize / 4;
+                        if (GUI.Button(new Rect(posX, posY, 60, 20), "Search"))
+                        {
+                            ItemProduceSelector.ShowWindow((int handle) =>
+                            {
+                                m_stat.ProduceList[i] = handle;
+                            }, m_window.position.position);
+                        }
+                        posX += 60;
+                        if (EditorDB.ItemProduceDic.ContainsKey(m_stat.ProduceList[i]))
+                        { 
+                            ItemProduceFormula produceFormula = EditorDB.ItemProduceDic[m_stat.ProduceList[i]];
+                            EditorGUI.LabelField(new Rect(posX, posY, m_windowSize / 3+5, 20), EditorDB.ItemDic[produceFormula.OutItem.Handle].Name);
+                            posX += m_windowSize / 3+5;
+                        }
+                        else
+                        {
+                            EditorGUI.LabelField(new Rect(posX, posY, m_windowSize / 3+5, 20), "Not found handle");
+                            posX += m_windowSize / 3+5;
+                        }
+                        if (GUI.Button(new Rect(posX, posY, 20, 20), "X"))
+                            m_stat.ProduceList.RemoveAt(i);
+                        posX += 20;
+                        posY += 25;
+                    }
+                    if (GUI.Button(new Rect(0, posY, 60, 20), "Add"))
+                    {
+                        ItemProduceSelector.ShowWindow((int handle) =>
+                        {
+                            m_stat.ProduceList.Add(handle);
+                        }, m_window.position.position);
+                    }
+                }
                 break;
             case 2:
                 if (m_stat.Comment == null)
                     m_stat.Comment = new List<string>();
 
-                EditorGUI.LabelField(new Rect(30 + m_windowSize / 2, posY, m_windowSize / 2, 20), "Comment", m_guiStyle);
+                EditorGUI.LabelField(new Rect(30 + m_windowSize / 2, posY, m_windowSize / 2, 20), "Comment");
                 if (GUI.Button(new Rect(0, posY, 20, 20), "+"))
                     m_stat.Comment.Add("");
 
@@ -112,7 +160,7 @@ public class NPCEditor : EditorWindow
                 if (m_stat.Scripts == null)
                     m_stat.Scripts = new List<string>();
 
-                EditorGUI.LabelField(new Rect(30 + m_windowSize / 2, posY, m_windowSize / 2, 20), "Scripts", m_guiStyle);
+                EditorGUI.LabelField(new Rect(30 + m_windowSize / 2, posY, m_windowSize / 2, 20), "Scripts");
                 if (GUI.Button(new Rect(0, posY, 20, 20), "+"))
                     m_stat.Scripts.Add("");
 
@@ -277,7 +325,8 @@ public class NPCEditor : EditorWindow
                 WriteFileToString(File, "      \"Scripts\" : " + "\"" + string.Join(",", stat.Value.Scripts) + "\",\r");
             if ((stat.Value.Option & ENpcOption.Shop) != 0)
                 WriteFileToString(File, "      \"ShopHandle\" : " + "\"" + string.Join(",", stat.Value.ShopHandle) + "\",\r");
-
+            if((stat.Value.Option & ENpcOption.Produce) != 0)
+                WriteFileToString(File, "      \"ProduceHandle\" : " + "\"" + string.Join(",", stat.Value.ProduceList) + "\",\r");
             WriteFileToString(File, "      \"MoveSpeed\" : " + "\"" + stat.Value.MoveSpeed + "\"\r");
 
             if (i < EditorDB.NPCStatDic.Count - 1)

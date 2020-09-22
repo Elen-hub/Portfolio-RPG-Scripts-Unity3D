@@ -13,6 +13,7 @@ public enum EItemType
     Shoes,
     Ring,
     Necklace,
+    All,
 }
 public enum EItemRarity
 {

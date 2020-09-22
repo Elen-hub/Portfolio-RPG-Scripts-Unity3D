@@ -5,7 +5,7 @@ using UnityEngine;
 using SimpleJSON;
 using UnityEngine.UIElements;
 
-enum EItemProduceType
+public enum EItemProduceType
 {
     Material,
     Potion,
@@ -23,9 +23,11 @@ public struct ProduceMaterialHandler
 }
 public class ItemProduceFormula
 {
+    public EItemProduceType ItemProduceType;
     public System.HashInt Handle;
     public ProduceMaterialHandler OutItem;
-    public ProduceMaterialHandler[] InItem;
+    public List<ProduceMaterialHandler> InItem = new List<ProduceMaterialHandler>();
+    public System.HashInt Level;
     public System.HashInt Gold;
     public System.HashFloat ProduceTime;
     public System.HashFloat CoolTime;
@@ -33,16 +35,25 @@ public class ItemProduceFormula
     public bool PossibleProduceItem()
     {
         if (PlayerMng.Instance.MainPlayer.Gold < Gold)
+        {
+            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "제작에 필요한 골드가 부족합니다.");
             return false;
+        }
 
         if ((DateTime.Now - m_possibleProduceTime).TotalSeconds < 0)
+        {
+            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "아직 제작 할 수 없습니다.");
             return false;
+        }
 
-        for (int i =0; i<InItem.Length; ++i)
+        for (int i =0; i<InItem.Count; ++i)
         {
             Item_Base item = ItemMng.Instance.FindItemInInventory(InItem[i].Handle);
             if (item == null)
+            {
+                SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "제작에 필요한 재료가 부족합니다");
                 return false;
+            }
 
             switch (item.Type)
             {
@@ -51,7 +62,10 @@ public class ItemProduceFormula
                 case EItemType.Scroll:
                     IItemNumber itemInterface = item as IItemNumber;
                     if (itemInterface.Number < InItem[i].Number)
+                    {
+                        SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "제작에 필요한 재료가 부족합니다");
                         return false;
+                    }
                     break;
                 case EItemType.Weapon:
                 case EItemType.Armor:
@@ -61,28 +75,43 @@ public class ItemProduceFormula
                 case EItemType.Shoes:
                     Item_Equipment equipItem = item as Item_Equipment;
                     if (equipItem.Value < InItem[i].Number)
+                    {
+                        SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "제작에 필요한 재료가 부족합니다");
                         return false;
+                    }
                     break;
                 default:
+                    SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "제작에 필요한 재료가 부족합니다");
                     return false;
             }
         }
         return true;
     }
-    public void ProduceItem(string materialArray)
+    public void ProduceItem()
     {
         PlayerMng.Instance.MainPlayer.Gold -= Gold;
 
-        string[] materials = materialArray.Split('/');
-        for(int i =0; i<materials.Length; ++i)
+        for (int i = 0; i < InItem.Count; ++i)
         {
-            string[] material = materials[i].Split(',');
-            int inventoryNum = int.Parse(material[0]);
-            int number = int.Parse(material[1]);
-            if(number ==0)
-                ItemMng.Instance.RemoveItem(inventoryNum);
-            else
-                ItemMng.Instance.RemoveItem(inventoryNum, number);
+            Item_Base item = ItemMng.Instance.FindItemInInventory(InItem[i].Handle);
+            switch (item.Type)
+            {
+                case EItemType.Potion:
+                case EItemType.Other:
+                case EItemType.Scroll:
+                    ItemMng.Instance.RemoveItem(item, InItem[i].Number);
+                    break;
+                case EItemType.Weapon:
+                case EItemType.Armor:
+                case EItemType.Gloves:
+                case EItemType.Necklace:
+                case EItemType.Ring:
+                case EItemType.Shoes:
+                    ItemMng.Instance.RemoveItem(item);
+                    break;
+                default:
+                    break;
+            }
         }
 
         m_possibleProduceTime = DateTime.Now;
@@ -148,12 +177,13 @@ public partial class ItemMng : TSingleton<ItemMng>
             string[] outHandler = Node[i]["OutItemHandler"].Value.Split(',');
             produceFormula.OutItem = new ProduceMaterialHandler(int.Parse(outHandler[0]), int.Parse(outHandler[1]));
             string[] inHandlerArray = Node[i]["InItemHandler"].Value.Split('/');
-            produceFormula.InItem = new ProduceMaterialHandler[inHandlerArray.Length];
             for (int j = 0; j < inHandlerArray.Length; ++j)
             {
                 string[] inHandler = inHandlerArray[j].Split(',');
-                produceFormula.InItem[j] = new ProduceMaterialHandler(int.Parse(inHandler[0]), int.Parse(inHandler[1]));
+                produceFormula.InItem.Add(new ProduceMaterialHandler(int.Parse(inHandler[0]), int.Parse(inHandler[1])));
             }
+            produceFormula.ItemProduceType = (EItemProduceType)int.Parse(Node[i]["Type"].Value);
+            produceFormula.Level = int.Parse(Node[i]["Level"].Value);
             produceFormula.Gold = int.Parse(Node[i]["Gold"].Value);
             produceFormula.ProduceTime = float.Parse(Node[i]["ProduceTime"].Value);
             produceFormula.CoolTime = float.Parse(Node[i]["CoolTime"].Value);

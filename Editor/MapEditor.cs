@@ -61,8 +61,8 @@ public class MapEditor : EditorWindow
     }
     void OnGUI()
     {
-        DrawGrid(20, 0.2f, Color.gray);
-        DrawGrid(100, 0.4f, Color.gray);
+        DrawGrid(20, 0.2f, Color.grey);
+        DrawGrid(100, 0.4f, Color.grey);
         DrawInformationWindow();
         ProcessEvents(Event.current);
         SelectArea();

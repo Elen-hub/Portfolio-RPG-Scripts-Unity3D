@@ -18,6 +18,7 @@ public static class EditorDB
     public static Dictionary<int, Item_Base> ItemDic = new Dictionary<int, Item_Base>();
     public static Dictionary<int, Quest> QuestDic = new Dictionary<int, Quest>();
     public static Dictionary<int, CoinShopInfo> ShopDic = new Dictionary<int, CoinShopInfo>();
+    public static Dictionary<int, ItemProduceFormula> ItemProduceDic = new Dictionary<int, ItemProduceFormula>();
     public static void Init()
     {
         if (IsLoad)
@@ -30,6 +31,7 @@ public static class EditorDB
         LoadNPC();
         LoadItem();
         LoadQuest();
+        LoadItemProduce();
         LoadCoinShop();
 
         IsLoad = true;
@@ -49,7 +51,7 @@ public static class EditorDB
         for (int i = 0; i < Node.Count; ++i)
         {
             Stat stat = new Stat()
-            {
+            { 
                 Handle = int.Parse(Node[i]["Handle"]),
                 Class = (ECharacterClass)int.Parse(Node[i]["Class"]),
                 Awakening = int.Parse(Node[i]["Awakening"]),
@@ -397,7 +399,13 @@ public static class EditorDB
                 for (int j = 0; j < ShopHandle.Length; ++j)
                     stat.ShopHandle.Add(int.Parse(ShopHandle[j]));
             }
-  
+            if (Node[i]["ProduceHandle"])
+            {
+                stat.ProduceList = new List<int>();
+                string[] ProduceHandle = Node[i]["ProduceHandle"].Value.Split(',');
+                for (int j = 0; j < ProduceHandle.Length; ++j)
+                    stat.ProduceList.Add(int.Parse(ProduceHandle[j]));
+            }
 
             EditorDB.NPCStatDic.Add(stat.Handle, stat);
         }
@@ -535,6 +543,33 @@ public static class EditorDB
             }
 
             EditorDB.QuestDic.Add(Quest.Handle, Quest);
+        }
+    }
+    static void LoadItemProduce()
+    {
+        TextAsset Asset = new TextAsset(File.ReadAllText("Assets/AssetBundle_Database/DB_ItemProduce.json"));
+        if (Asset == null)
+            return;
+
+        JSONNode Node = JSON.Parse(Asset.text);
+        for (int i = 0; i < Node.Count; ++i)
+        {
+            ItemProduceFormula produceFormula = new ItemProduceFormula();
+            produceFormula.Handle = int.Parse(Node[i]["Handle"].Value);
+            string[] outHandler = Node[i]["OutItemHandler"].Value.Split(',');
+            produceFormula.OutItem = new ProduceMaterialHandler(int.Parse(outHandler[0]), int.Parse(outHandler[1]));
+            string[] inHandlerArray = Node[i]["InItemHandler"].Value.Split('/');
+            for (int j = 0; j < inHandlerArray.Length; ++j)
+            {
+                string[] inHandler = inHandlerArray[j].Split(',');
+                produceFormula.InItem.Add(new ProduceMaterialHandler(int.Parse(inHandler[0]), int.Parse(inHandler[1])));
+            }
+            produceFormula.ItemProduceType = (EItemProduceType)int.Parse(Node[i]["Type"].Value);
+            produceFormula.Level = int.Parse(Node[i]["Level"].Value);
+            produceFormula.Gold = int.Parse(Node[i]["Gold"].Value);
+            produceFormula.ProduceTime = float.Parse(Node[i]["ProduceTime"].Value);
+            produceFormula.CoolTime = float.Parse(Node[i]["CoolTime"].Value);
+            ItemProduceDic.Add(produceFormula.Handle, produceFormula);
         }
     }
 }

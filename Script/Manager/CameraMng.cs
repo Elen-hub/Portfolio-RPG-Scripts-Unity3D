@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 using UnityEngine.Rendering.PostProcessing;
 
 public class CameraMng : TSingleton<CameraMng>
-{
+{ 
     [Flags] public enum CameraStyle
     {
         None = 0,
@@ -72,7 +72,7 @@ public class CameraMng : TSingleton<CameraMng>
             return;
 
         if ((style & CameraStyle.UI) != 0)
-        {
+        { 
             m_cameraDic[CameraStyle.UI].Enabled = (style & CameraStyle.UI) != 0;
             CurrentCamera = m_cameraDic[CameraStyle.UI];
         }
@@ -103,7 +103,7 @@ public class CameraMng : TSingleton<CameraMng>
     {
         return m_cameraDic[CamStyle];
     }
-
+     
     public void CreateCamera(CameraStyle CamStyle)
     {
         BaseCamera cam = Instantiate(Resources.Load<GameObject>("Camera/" + CamStyle.ToString() + " Camera")).GetComponent<BaseCamera>();

@@ -16,6 +16,7 @@ public class NPCStat
     public List<int> ShopHandle;
     public List<Quest> QuestList;
     public int TrainHandle;
+    public List<int> ProduceList;
 
     public void Init()
     {
@@ -29,6 +30,7 @@ public enum ENpcOption
     Aution = 2,
     Quest = 4,
     Train = 8,
+    Produce = 16,
 }
 public class BaseNPC : BaseCharacter
 {
