@@ -30,12 +30,15 @@ public class Skill_Archer_SplitWind : BaseSkill
         yield return new WaitForSeconds(SkillInfo.DurationTime*0.6f);
         EffectMng.Instance.FindEffect("Skill/Effect_Archer_SplitWindBlast", transform.position, transform.eulerAngles, 2);
         trs.SetParent(EffectMng.Instance.transform);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         // 이펙트
         List<BaseCharacter> characterList = CharacterMng.Instance.GetCharacterToRectangleRange(transform.position, transform.eulerAngles.y, 3, SkillInfo.Range);
         EAllyType targetAlly = EAllyType.Friendly | EAllyType.Player;
         if (Caster.AllyType != EAllyType.Hostile)
             targetAlly = EAllyType.Hostile;
+
+        Caster.Nuckback(-transform.forward, 0.3f, 0.6f);
+        yield return new WaitForSeconds(0.1f);   
 
         int casterID = Caster.UniqueID;
         EAttackType type;

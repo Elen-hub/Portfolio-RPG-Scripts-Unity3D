@@ -20,13 +20,13 @@ public class ItemSelector : EditorWindow
     public static void ShowWindow(Del_Selection selectionMethod, Vector2 position)
     {
         m_window = GetWindow(typeof(ItemSelector));
+        m_window.position = new Rect(position, m_window.minSize);
         m_window.minSize = new Vector2(400, 50);
         m_window.maxSize = new Vector2(400, 600);
         m_windowSize = m_window.maxSize.x;
         m_guiStyle = new GUIStyle();
         m_guiStyle.richText = true;
 
-        m_window.position = new Rect(position, m_window.minSize);
         DHandlerSelectionMethod = selectionMethod;
 
         m_showType = EItemType.All;
@@ -34,7 +34,7 @@ public class ItemSelector : EditorWindow
     }
     private void OnGUI()
     {
-        m_window.Focus();
+        m_window.Show();
         SelectionItem();
     }
     public void SelectionItem()

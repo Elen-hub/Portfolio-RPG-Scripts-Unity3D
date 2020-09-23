@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class NPCUI_ItemProduceVisible : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class NPCUI_ItemProduceVisible : MonoBehaviour
     Text[] m_materialNumber = new Text[6];
     ItemProduceFormula m_produceFormula;
     Text m_producingStateText;
+    Image m_producingProgressBar;
+    Image m_coolTimeProgressBar;
 
     bool m_isProducing;
     float m_produceElapsedTime;
@@ -31,6 +34,8 @@ public class NPCUI_ItemProduceVisible : MonoBehaviour
         m_outItemPrice = outItem.Find("Dynamic").Find("Price").GetComponent<Text>();
         m_outItemTime = outItem.Find("Dynamic").Find("Time").GetComponent<Text>();
         m_outItemCoolTime = outItem.Find("Dynamic").Find("CoolTime").GetComponent<Text>();
+        m_producingProgressBar = transform.Find("ProducingBar").GetComponent<Image>();
+        m_coolTimeProgressBar = transform.Find("CoolTimeBar").GetComponent<Image>();
 
         Transform material = transform.Find("ItemProduceMaterial").Find("Materials");
         for (int i =0; i<6; ++i)
@@ -74,6 +79,8 @@ public class NPCUI_ItemProduceVisible : MonoBehaviour
         for (i = i; i < 6; ++i)
             m_materialContents[i].Disabled();
 
+        m_producingProgressBar.fillAmount = 0;
+
         m_produceFormula = formula;
         gameObject.SetActive(true);
     }
@@ -88,16 +95,19 @@ public class NPCUI_ItemProduceVisible : MonoBehaviour
             return;
         if(!m_produceFormula.PossibleProduceItem())
             return;
+
         m_produceElapsedTime = 0;
         m_isProducing = true;
         m_producingStateText.text = "제작중";
     }
     void LateUpdate()
     {
-        if(m_isProducing)
+        m_coolTimeProgressBar.fillAmount = m_produceFormula.GetCurrCoolTime;
+        if (m_isProducing)
         {
             m_produceElapsedTime += Time.deltaTime;
-            if(m_produceElapsedTime > m_produceFormula.ProduceTime)
+            m_producingProgressBar.fillAmount = m_produceElapsedTime / m_produceFormula.ProduceTime;
+            if (m_produceElapsedTime > m_produceFormula.ProduceTime)
             {
                 m_isProducing = false;
                 m_producingStateText.text = "제작";

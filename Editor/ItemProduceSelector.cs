@@ -6,9 +6,14 @@ using NUnit.Framework.Internal.Execution;
 
 public class ItemProduceSelector : EditorWindow
 {
-    static EditorWindow m_window;
+    static EditorWindow m_window; 
     static GUIStyle m_guiStyle;
     static float m_windowSize;
+
+    public static EditorWindow Window
+    {
+        get { return m_window; } 
+    }
 
     static Del_Selection DHandlerSelectionMethod;
 
@@ -16,18 +21,18 @@ public class ItemProduceSelector : EditorWindow
     public static void ShowWindow(Del_Selection selectionMethod, Vector2 position)
     {
         m_window = GetWindow(typeof(ItemProduceSelector));
+        m_window.position = new Rect(position, m_window.minSize);
         m_window.minSize = new Vector2(400, 50);
         m_window.maxSize = new Vector2(400, 600);
-        m_windowSize = m_window.maxSize.x;
+        m_windowSize = 400;
         m_guiStyle = new GUIStyle();
         m_guiStyle.richText = true;
 
-        m_window.position = new Rect(position, m_window.minSize);
         DHandlerSelectionMethod = selectionMethod;
     }
     private void OnGUI()
     {
-        m_window.Focus();
+        m_window.Show();
         SelectionProduceFormula();
     }
     public void SelectionProduceFormula()

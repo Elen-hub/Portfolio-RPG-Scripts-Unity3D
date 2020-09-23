@@ -25,7 +25,7 @@ public abstract class BaseCharacter : MonoBehaviour
     [Header("Info")]
     public int UniqueID;
     public EAllyType AllyType;
-    [SerializeField] CharacterState m_state;
+    [SerializeField] protected CharacterState m_state;
 
     BaseEffect m_stunEffect;
     public BaseCharacter Target;

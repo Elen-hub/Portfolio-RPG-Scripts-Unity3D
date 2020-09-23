@@ -31,7 +31,8 @@ public class ItemProduceFormula
     public System.HashInt Gold;
     public System.HashFloat ProduceTime;
     public System.HashFloat CoolTime;
-    DateTime m_possibleProduceTime;
+    DateTime m_possibleProduceTime = DateTime.Now;
+    public float GetCurrCoolTime{ get { return (float)(DateTime.Now - m_possibleProduceTime).TotalSeconds; } }
     public bool PossibleProduceItem()
     {
         if (PlayerMng.Instance.MainPlayer.Gold < Gold)
@@ -114,8 +115,7 @@ public class ItemProduceFormula
             }
         }
 
-        m_possibleProduceTime = DateTime.Now;
-        m_possibleProduceTime.AddSeconds(CoolTime);
+        m_possibleProduceTime = DateTime.Now.AddSeconds(CoolTime);
 
         Item_Base cloneItem = ItemMng.Instance.GetItemList[OutItem.Handle].Clone();
         switch (cloneItem.Type)

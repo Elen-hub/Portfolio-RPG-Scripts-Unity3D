@@ -60,7 +60,9 @@ public class ItemProduceEditor : EditorWindow
         if (GUI.Button(new Rect(m_windowSize - newHandlerBtnLength - selectorOpenBtnLength, 0, saveBtnLength, 20), "Save"))
             Save();
         if (GUI.Button(new Rect(m_windowSize - selectorOpenBtnLength, 0, selectorOpenBtnLength, 20), "Find"))
+        {
             ItemProduceSelector.ShowWindow(SetHandle, m_window.position.position);
+        }
 
         yPos += 30;
         return selectionHandle;
@@ -221,8 +223,7 @@ public class ItemProduceEditor : EditorWindow
             newFormula.OutItem = new ProduceMaterialHandler(handle, 0);
             EditorDB.ItemProduceDic.Add(outHandle, newFormula);
             SetHandle(outHandle);
-        }, m_window.position.size
-        );
+        }, m_window.position.size);
     }
     void SetHandle(int handle)
     {

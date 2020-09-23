@@ -19,12 +19,15 @@ public abstract class BaseEnermy : BaseCharacter
     protected EnermyPattern m_nextPattern;
     public virtual void Respawn(int uniqueID, EAllyType allyType, Vector3 pos)
     {
+        RESET();
         UniqueID = uniqueID;
         transform.position = pos;
-        m_initPosition = transform.position;
+        m_initPosition = pos;
         StatSystem.CurrHP = StatSystem.GetHP;
-        State = CharacterState.Idle;
+        m_state = CharacterState.Idle;
         gameObject.SetActive(true);
+        MoveSystem.Stop = false;
+        m_collider.enabled = true;
     }
     public virtual void Init(int uniqueID, EAllyType allyType, NormalAttack attack, Stat stat)
     {

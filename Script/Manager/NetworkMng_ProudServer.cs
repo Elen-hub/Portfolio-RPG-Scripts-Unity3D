@@ -631,7 +631,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
             UIMng.Instance.CLOSE = UIMng.UIName.Loading;
             if (isSuccess)
             {
-                SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Main, ItemMng.Instance.GetItemList[ItemMng.Instance.GetItemProduceFormula(produceHandle).Handle].Name + "을(를) 제작하였습니다.");
+                SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Main, ItemMng.Instance.GetItemList[ItemMng.Instance.GetItemProduceFormula(produceHandle).OutItem.Handle].Name + "을(를) 제작하였습니다.");
                 ItemMng.Instance.GetItemProduceFormula(produceHandle).ProduceItem();
             }
             return true;
@@ -996,8 +996,11 @@ public partial class NetworkMng : TSingleton<NetworkMng>
                 PlayerMng.Instance.MainPlayer.CurrMapHandle = mapHandle;
                 MapMng.Instance.SetCurrMap(PlayerMng.Instance.MainPlayer.CurrMapHandle);
                 Map map = MapMng.Instance.CurrMap;
-                SceneMng.Instance.SetGameScene(map.SceneName, ContinueAfterAction);
-                PlayerMng.Instance.MainPlayer.Character.MoveSystem.SetPosition = pos;
+                SceneMng.Instance.SetGameScene(map.SceneName, ()=> 
+                {
+                    ContinueAfterAction();
+                    PlayerMng.Instance.MainPlayer.Character.MoveSystem.SetPosition = pos;
+                });
             }
             return true;
         };
@@ -1028,8 +1031,11 @@ public partial class NetworkMng : TSingleton<NetworkMng>
                 PlayerMng.Instance.MainPlayer.CurrMapHandle = mapHandle;
                 MapMng.Instance.SetCurrMap(PlayerMng.Instance.MainPlayer.CurrMapHandle);
                 Map map = MapMng.Instance.CurrMap;
-                SceneMng.Instance.SetGameScene(map.SceneName, ContinueAfterAction);
-                PlayerMng.Instance.MainPlayer.Character.MoveSystem.SetPosition = pos;
+                SceneMng.Instance.SetGameScene(map.SceneName, () =>
+                {
+                    ContinueAfterAction();
+                    PlayerMng.Instance.MainPlayer.Character.MoveSystem.SetPosition = pos;
+                });
             }
             else
             {

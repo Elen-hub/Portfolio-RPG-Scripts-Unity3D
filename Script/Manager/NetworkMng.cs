@@ -15,6 +15,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
 {
     HostID m_groupID;
     string m_serverAddress = "15.164.245.51";
+    // string m_serverAddress = "192.168.219.100";
     public string GetIPAddress { get { return m_serverAddress; } set { m_serverAddress = value; } }
     // string m_serverAddress = "localhost";
     Guid m_guidVersion = new Guid("{0x118ccf78,0x764b,0x419e,{0xae,0xd,0x19,0xe1,0x75,0x65,0x16,0xb0}}");

@@ -60,12 +60,7 @@ public class Skill_Archer_KnifeWind : BaseSkill
             missile.Enabled(Caster, type, targetAlly, damage, 0.3f, Caster.AttachSystem.GetAttachPoint(EAttachPoint.Chest).position, target, 
                 (BaseCharacter character) => character.Nuckback((character.transform.position - transform.position).normalized, 0.15f, 0.5f));
         }
-        WaitForSeconds wait = new WaitForSeconds(0.02f);
-        for (int i = 0; i < 10; ++i)
-        {
-            transform.position -= transform.forward * 0.03f;
-            yield return wait;
-        }
+        Caster.Nuckback(-transform.forward, 0.2f, 0.35f);
 
         yield return null;
     }
