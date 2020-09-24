@@ -150,18 +150,6 @@ public partial class ItemMng : TSingleton<ItemMng>
         return m_itemProduceFormulaDic[handle];
     }
 
-    // 조합기능 테스트
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        if (GUI.Button(new Rect(0, 0, 100, 100), "Test1"))
-            NetworkMng.Instance.RequestProduceItem(0);
-
-        //if (GUI.Button(new Rect(100, 0, 100, 100), "Test2"))
-        //    Debug.Log(m_itemProduceFormulaDic[0].PossibleProduceItem());
-    }
-#endif
-
     void ItemProduceInit()
     {
 #if UNITY_EDITOR

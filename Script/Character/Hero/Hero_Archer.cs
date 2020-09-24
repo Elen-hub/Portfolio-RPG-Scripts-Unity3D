@@ -12,6 +12,7 @@ public class Hero_Archer : BaseHero
         if (transform.tag != "Player")
             return;
 
+        CameraMng.Instance.GetCamera<PlayerCamera>(CameraMng.CameraStyle.Player).CameraAction_Look(0.9f);
         EAttackType type;
         float damage;
         if (StatSystem.IsCritical)

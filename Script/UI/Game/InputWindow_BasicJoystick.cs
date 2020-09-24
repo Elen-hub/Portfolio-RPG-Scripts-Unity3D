@@ -13,7 +13,7 @@ public partial class InputWindow_BasicJoystick : MonoBehaviour, IPointerUpHandle
     // 이렇게 설정한다면, 포지션값은 좌측이 -0.5로 시작해서 우측은 0.5로 끝나게 됩니다.
 
     PointerEventData m_eventData;
-    Camera m_camera;
+    Transform m_camera;
 	private Image m_backgroundImg;
 	private Image m_buttonImg;
 	private Vector2 m_axis = Vector2.zero;
@@ -21,14 +21,12 @@ public partial class InputWindow_BasicJoystick : MonoBehaviour, IPointerUpHandle
     BaseCharacter m_character;
 
     bool m_isDown;
-    float m_holdAngle;
     public void Init()
     {
         m_character = PlayerMng.Instance.MainPlayer.Character;
-        m_camera = CameraMng.Instance.GetCamera(CameraMng.CameraStyle.UI).camera;
+        m_camera = CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.transform;
         m_backgroundImg = GetComponent<Image>();
         m_buttonImg = transform.Find("Button").GetComponent<Image>();
-        m_camera = CameraMng.Instance.GetCamera(CameraMng.CameraStyle.UI).camera;
     }
     public void Enabled()
     {
@@ -48,10 +46,6 @@ public partial class InputWindow_BasicJoystick : MonoBehaviour, IPointerUpHandle
 	{
         m_isDown = true;
         m_eventData = eventData;
-        if (!GameSystem.PlayerCameraHoldRot)
-            m_holdAngle = m_character.transform.eulerAngles.y;
-        else
-            m_holdAngle = 0;
     }
 	public void OnPointerUp (PointerEventData eventData)
 	{
@@ -102,14 +96,14 @@ public partial class InputWindow_BasicJoystick : MonoBehaviour, IPointerUpHandle
                 {
                     if (m_axis.x >= 0)
                     {
-                        float Angle = Vector2.Angle(Vector2.up, m_axis) + m_holdAngle;
+                        float Angle = Vector2.Angle(Vector2.up, m_axis) + m_camera.eulerAngles.y;
 
                         m_character.SetAngle(Angle);
                         m_character.State = BaseCharacter.CharacterState.Move;
                     }
                     else
                     {
-                        float Angle = Vector2.Angle(-Vector2.up, m_axis) + 180 + m_holdAngle;
+                        float Angle = Vector2.Angle(-Vector2.up, m_axis) + 180 + m_camera.eulerAngles.y;
 
                         m_character.SetAngle(Angle);
                         m_character.State = BaseCharacter.CharacterState.Move;

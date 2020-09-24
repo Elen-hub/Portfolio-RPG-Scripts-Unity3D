@@ -12,22 +12,17 @@ public enum EItemUpgradeType
 
 public class UI_ItemUpgrade : MonoBehaviour
 {
-    EItemUpgradeType m_currViewType;
-    Item_Base m_selectItem;
-    NPCUI_ItemUpgrade_Evolution m_evolutionView;
-    NPCUI_ItemUpgrade_Reforgin m_reforginView;
-    NPCUI_ItemUpgrade_MagicJewal m_magicJewalView;
+    Item_Equipment m_selectItem;
+    NPCUI_ItemUpgrade_UpgradeInfo m_upgradeInfo;
+    List<NPCUI_ItemUpgrade_UpgradeContent> m_contentList = new List<NPCUI_ItemUpgrade_UpgradeContent>();
     public void Init()
     {
-        m_evolutionView = GetComponent<NPCUI_ItemUpgrade_Evolution>().Init();
-        m_reforginView = GetComponent<NPCUI_ItemUpgrade_Reforgin>().Init();
-        m_magicJewalView = GetComponent<NPCUI_ItemUpgrade_MagicJewal>().Init();
+        m_upgradeInfo = GetComponent<NPCUI_ItemUpgrade_UpgradeInfo>().Init();
         transform.Find("Exit").GetComponent<Button>().onClick.AddListener(Disabled);
         gameObject.SetActive(false);
     }
     public void Enabled()
     {
-        m_currViewType = EItemUpgradeType.Evolution;
         m_selectItem = null;
         gameObject.SetActive(true);
     }

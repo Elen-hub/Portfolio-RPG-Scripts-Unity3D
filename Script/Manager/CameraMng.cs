@@ -33,7 +33,6 @@ public class CameraMng : TSingleton<CameraMng>
         set { m_ambient.enabled.value = value; }
     }
 
-
     public override void Init()
     {
         CreateCamera(CameraStyle.Player);
@@ -112,28 +111,35 @@ public class CameraMng : TSingleton<CameraMng>
         cam.transform.SetParent(transform);
         cam.Enabled = false;
     }
+    private void OnGUI()
+    {
+        if (GUI.Button(new Rect(0, 0, 100, 100), "EQ_100, 100"))
+            EarthQuakeShake(CameraMng.Instance.GetCamera(CameraStyle.World).camera, 0.25f, 100, 1);
+        if (GUI.Button(new Rect(100, 0, 100, 100), "EQ_100, 100"))
+            GetCamera<PlayerCamera>(CameraStyle.Player).CameraAction_Look(0.7f);
+    }
 
     #region ShockWave
 
-    public static void Shockwave(float x, float y)
+    public static void Shockwave(Camera camera, float x, float y)
     {
-        CameraPlay_Shockwave CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
+        CameraPlay_Shockwave CP = camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
         CP.PosX = x;
         CP.PosY = y;
         CP.Duration = 1;
     }
 
-    public static void Shockwave(Vector3 Pos)
+    public static void Shockwave(Camera camera, Vector3 Pos)
     {
-        CameraPlay_Shockwave CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
+        CameraPlay_Shockwave CP = camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
         CP.PosX = Pos.x;
         CP.PosY = Pos.y;
         CP.Duration = 1.5f;
     }
 
-    public static void Shockwave(float x, float y, float time)
+    public static void Shockwave(Camera camera, float x, float y, float time)
     {
-        CameraPlay_Shockwave CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
+        CameraPlay_Shockwave CP = camera.gameObject.AddComponent<CameraPlay_Shockwave>() as CameraPlay_Shockwave;
         CP.PosX = x;
         CP.PosY = y;
         CP.Duration = time;
@@ -211,36 +217,12 @@ public class CameraMng : TSingleton<CameraMng>
 
     #region Earth  Quake
 
-    public static void EarthQuakeShake(float duration, float Speed, float Size)
+    public static void EarthQuakeShake(Camera camera, float duration, float Speed, float Size)
     {
-        CameraPlay_Shake CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shake>() as CameraPlay_Shake;
+        CameraPlay_Shake CP = camera.gameObject.AddComponent<CameraPlay_Shake>() as CameraPlay_Shake;
         CP.Duration = duration;
         CP.Speed = Speed;
         CP.Size = Size;
-    }
-
-    public static void EarthQuakeShake(float duration, float Speed)
-    {
-        CameraPlay_Shake CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shake>() as CameraPlay_Shake;
-        CP.Duration = duration;
-        CP.Speed = Speed;
-        CP.Size = 2;
-    }
-
-    public static void EarthQuakeShake(float duration)
-    {
-        CameraPlay_Shake CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shake>() as CameraPlay_Shake;
-        CP.Duration = duration;
-        CP.Speed = 15;
-        CP.Size = 2;
-    }
-
-    public static void EarthQuakeShake()
-    {
-        CameraPlay_Shake CP = CurrentCamera.camera.gameObject.AddComponent<CameraPlay_Shake>() as CameraPlay_Shake;
-        CP.Duration = 1;
-        CP.Speed = 15;
-        CP.Size = 2;
     }
 
     #endregion

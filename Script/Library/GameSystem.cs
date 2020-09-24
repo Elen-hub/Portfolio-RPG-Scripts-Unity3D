@@ -36,9 +36,9 @@ public class GameSystem
     public static bool UseSound = true;
 
     public static bool PlayerCameraHoldRot = true;
-    public static float PlayerCameraHeight = 7;
-    public static float PlayerCameraWidth = 4;
-    public static float PlayerCameraAngle = 60;
+    public static float PlayerCameraHeight = 5;
+    public static float PlayerCameraWidth = 4.5f;
+    public static float PlayerCameraAngle = 45;
 
     public static string ID;
     public static string PWD;

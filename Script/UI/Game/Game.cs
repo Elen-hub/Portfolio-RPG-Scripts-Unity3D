@@ -18,6 +18,10 @@ public class Game : BaseUI
     List<RaycastResult> m_hitList = new List<RaycastResult>();
     GameObject m_exitBTN;
 
+    float m_inputScreenPoint;
+    Vector3 m_deltaScroll;
+    bool m_useDragCameraRot;
+
     public override void Init()
     {
         base.Init();
@@ -42,6 +46,8 @@ public class Game : BaseUI
         CharacterWindow.Init();
         DeviceWindow = GetComponentInChildren<DeviceWindow>();
         DeviceWindow.Init();
+
+        m_deltaScroll = Vector3.zero;
     }
     public override void Open()
     {
@@ -118,7 +124,35 @@ public class Game : BaseUI
                 //else if (Input.GetTouch(t).phase == TouchPhase.Moved || Input.GetTouch(t).phase == TouchPhase.Stationary) { }
             }
 #else
+        // 카메라 회전 시작
         if (Input.GetMouseButtonDown(0))
+        {
+            if (!GameSystem.PlayerCameraHoldRot)
+            {
+                m_hitList.Clear();
+                PointerEventData data = new PointerEventData(EventSystem.current);
+                data.position = Input.mousePosition;
+                EventSystem.current.RaycastAll(data, m_hitList);
+
+                if (m_hitList.Count != 0)
+                    return;
+
+                m_useDragCameraRot = true;
+                m_inputScreenPoint = Input.mousePosition.x;
+            }
+        }
+        // 카메라 회전 중 이라면
+        if (m_useDragCameraRot)
+        {
+            if (!GameSystem.PlayerCameraHoldRot)
+            {
+                m_deltaScroll.y = m_inputScreenPoint - Input.mousePosition.x;
+                m_inputScreenPoint = Input.mousePosition.x;
+                CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).transform.eulerAngles += m_deltaScroll * Time.deltaTime * 5;
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
         {
             RaycastHit hit;
 
@@ -126,9 +160,12 @@ public class Game : BaseUI
             PointerEventData data = new PointerEventData(EventSystem.current);
             data.position = Input.mousePosition;
             EventSystem.current.RaycastAll(data, m_hitList);
-
+            // 카메라 회전 종료
+            m_useDragCameraRot = false;
+            m_deltaScroll = Vector3.zero;
             if (m_hitList.Count != 0)
                 return;
+
             if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
             {
                 switch(hit.transform.tag)

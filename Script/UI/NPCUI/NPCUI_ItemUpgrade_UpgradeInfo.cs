@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NPCUI_ItemUpgrade_MagicJewal : MonoBehaviour
+public class NPCUI_ItemUpgrade_UpgradeInfo : MonoBehaviour
 {
-    public NPCUI_ItemUpgrade_MagicJewal Init()
+    Item_Equipment m_item;
+    public NPCUI_ItemUpgrade_UpgradeInfo Init()
     {
         return this;
     }
 
-    public void Enabled()
+    public void Enabled(Item_Equipment item)
     {
+        m_item = item;
         gameObject.SetActive(true);
     }
     public void Disabled()
