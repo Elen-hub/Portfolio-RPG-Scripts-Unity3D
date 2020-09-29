@@ -179,7 +179,6 @@ public abstract class BaseCharacter : MonoBehaviour
 
         m_actionDic[State]();
     }
-
     public IEnumerator RevivalAfterTime(float time)
     {
         yield return new WaitForSeconds(time);

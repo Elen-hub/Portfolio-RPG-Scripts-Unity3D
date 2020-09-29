@@ -19,6 +19,7 @@ public class SubWindow_Map : MonoBehaviour
         m_mapImg = m_mapGrid.GetComponent<Image>();
         m_nameText = transform.Find("MapName").GetComponent<Text>();
         m_coordText = transform.Find("Coord").GetComponent<Text>();
+        SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Player, PlayerMng.Instance.MainPlayer.Character);
         return this;
     }
     public void SetMap()
@@ -29,8 +30,6 @@ public class SubWindow_Map : MonoBehaviour
 
         for(int i =0; i<m_staticIcon.Count; ++i)
             m_staticIcon[i].Disabled();
-        for (int i = 0; i < m_dynamicIcon.Count; ++i)
-            m_dynamicIcon[i].Disabled();
         for (int i = 0; i< map.PortalList.Count; ++i)
             SetStaticIcon(SubWindow_Map_StaticIcon.EMapStaticIconOption.TownPortal, map.PortalList[i].Coord);
         for(int i = 0; i<map.MatchPortalList.Count; ++i)
@@ -64,6 +63,16 @@ public class SubWindow_Map : MonoBehaviour
         icon.Enabled(option, character);
         m_dynamicIcon.Add(icon);
     }
+    public SubWindow_Map_DynamicIcon GetDynamicIcon(BaseCharacter character)
+    {
+        foreach(SubWindow_Map_DynamicIcon icon in m_dynamicIcon)
+        {
+            if (icon.Target == character)
+                return icon;
+        }
+
+        return null;
+    }
     public void Enabled()
     {
         gameObject.SetActive(true);
@@ -76,45 +85,5 @@ public class SubWindow_Map : MonoBehaviour
     {
         m_coord = PlayerMng.Instance.MainPlayer.Character.transform.position;
         m_coordText.text = m_coord.x.ToString("F0") + " , " + m_coord.z.ToString("F0");
-
-        if(PlayerMng.Instance.CurrParty == null)
-        {
-            for (int i = 0; i < m_dynamicIcon.Count; ++i)
-            {
-                if (m_dynamicIcon[i].Target == PlayerMng.Instance.MainPlayer.Character)
-                    continue;
-            }
-            SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Player, PlayerMng.Instance.MainPlayer.Character);
-        }
-        else
-        {
-            for(int i =0; i< PlayerMng.Instance.CurrParty.PartyMemberList.Count; ++i)
-            {
-                if (!PlayerMng.Instance.PlayerList.ContainsKey(PlayerMng.Instance.CurrParty.PartyMemberList[i]))
-                    continue;
-
-                BaseCharacter character = PlayerMng.Instance.PlayerList[PlayerMng.Instance.CurrParty.PartyMemberList[i]].Character;
-                if (character != null)
-                {
-                    for (int j = 0; j < m_dynamicIcon.Count; ++j)
-                    {
-                        if (m_dynamicIcon[j].Target == character)
-                            return;
-                    }
-                    switch(character.AllyType)
-                    {
-                        case EAllyType.Player:
-                            SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Player, character);
-                            break;
-                        case EAllyType.Friendly:
-                            SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Ally, character);
-                            break;
-                        case EAllyType.Hostile:
-                            SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Enermy, character);
-                            break;
-                    }
-                }
-            }
-        }
     }
 }

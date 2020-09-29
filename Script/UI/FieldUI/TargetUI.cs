@@ -17,7 +17,7 @@ public class TargetUI : BaseFieldUI
     public void Enabled(BaseCharacter target)
     {
         m_character = target;
-        m_eulerAngle.x = 30;
+        m_eulerAngle.x = m_camera.eulerAngles.x;
         m_eulerAngle.z += Time.deltaTime * 180;
         transform.localEulerAngles = m_eulerAngle;
         gameObject.SetActive(true);

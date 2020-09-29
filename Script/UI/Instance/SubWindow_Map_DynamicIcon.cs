@@ -42,7 +42,7 @@ public class SubWindow_Map_DynamicIcon : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (Target == null || Target.State == BaseCharacter.CharacterState.Death)
+        if (Target == null || !Target.gameObject.activeSelf || Target.State == BaseCharacter.CharacterState.Death)
         {
             Disabled();
             return;

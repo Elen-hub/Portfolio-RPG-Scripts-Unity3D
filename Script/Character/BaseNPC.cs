@@ -40,7 +40,7 @@ public class BaseNPC : BaseCharacter
     Vector3 m_initPosition;
     float m_commentElapsedTime;
     float m_alterElapsedTime;
-    public void Awake()
+    void Awake()
     {
         StatSystem = CharacterMng.Instance.GetNPCStat(Handle);
         m_initPosition = transform.position;

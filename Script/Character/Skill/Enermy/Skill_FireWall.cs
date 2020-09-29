@@ -71,7 +71,7 @@ public class Skill_FireWall : BaseSkill
                    CharacterMng.Instance.CheckToRectangleRange(character.transform.position, m_pos[3], 0, 2, 10);
 
             if (isDamage)
-                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Normal, Caster.UniqueID, character.UniqueID, character.StatSystem.GetHP * 0.2f, 0.2f);
+                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Normal, Caster.UniqueID, character.UniqueID, character.StatSystem.GetHP * 0.1f, 0.2f);
 
             yield return second;
         }

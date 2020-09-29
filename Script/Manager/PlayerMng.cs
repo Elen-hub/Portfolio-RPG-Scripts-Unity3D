@@ -21,15 +21,23 @@ public class Party
         Number = number;
         Level = level;
     }
-    public void Join(HostID id)
+    public bool Join(HostID id)
     {
         if (!PartyMemberList.Contains(id))
+        {
             PartyMemberList.Add(id);
+            return true;
+        }
+        return false;
     }
-    public void Leave(HostID id)
+    public bool Leave(HostID id)
     {
         if (PartyMemberList.Contains(id))
+        {
             PartyMemberList.Remove(id);
+            return true;
+        }
+        return false;
     }
     public EPartyState State;
     public int Handle;

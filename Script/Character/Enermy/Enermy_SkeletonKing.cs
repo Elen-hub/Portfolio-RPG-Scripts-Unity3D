@@ -8,6 +8,7 @@ public class Enermy_SkeletonKing : Enermy_Boss_CloseAttack
     public override void Init(int uniqueID, EAllyType allyType, NormalAttack attack, Stat stat)
     {
         base.Init(uniqueID, allyType, attack, stat);
+
         m_collider.radius = GameSystem.BossMonsterColliderRange;
         AttackSystem.SuperArmor = true;
         if (MeshEffect_FireSword == null)

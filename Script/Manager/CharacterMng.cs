@@ -191,6 +191,28 @@ public class CharacterMng : TSingleton<CharacterMng>
             case 56:
                 skill = hero.gameObject.AddComponent<Skill_Crusader_Advent>().Init(hero, info);
                 break;
+
+            case 31:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_FullMoomSlash>().Init(hero, info);
+                break;
+            case 32:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_Crescent>().Init(hero, info);
+                break;
+            case 33:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_Step>().Init(hero, info);
+                break;
+            case 34:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_MoonSlash>().Init(hero, info);
+                break;
+            case 36:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_MeteorSmash>().Init(hero, info);
+                break;
+            case 37:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_Asura>().Init(hero, info);
+                break;
+            case 39:
+                skill = hero.gameObject.AddComponent<Skill_Warrior_DrawingSword>().Init(hero, info);
+                break;
         }
 
         hero.AttackSystem.SkillDic.Add(key, skill);
@@ -227,11 +249,13 @@ public class CharacterMng : TSingleton<CharacterMng>
             case EAllyType.Friendly:
                 Character.tag = "Ally";
                 Character.gameObject.layer = LayerMask.NameToLayer("Ally");
+                UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Ally, Character);
                 CurrCharacters.Add(uniqueID, Character);
                 break;
             case EAllyType.Hostile:
                 Character.tag = "Enermy";
                 Character.gameObject.layer = LayerMask.NameToLayer("Enermy");
+                UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Enermy, Character);
                 CurrCharacters.Add(uniqueID, Character);
                 break;
             case EAllyType.Neutral:
@@ -240,7 +264,6 @@ public class CharacterMng : TSingleton<CharacterMng>
                 CurrCharacters.Add(uniqueID, Character);
                 break;
         }
-
         UIMng.Instance.GetUI<FieldUI>(UIMng.UIName.FieldUI).SetNameText(Character, name);
         return Character;
     }
@@ -271,9 +294,8 @@ public class CharacterMng : TSingleton<CharacterMng>
         CurrCharacters.Add(uniqueID, Character);
         Character.tag = "Enermy";
         Character.gameObject.layer = LayerMask.NameToLayer("Enermy");
-        UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Enermy, Character);
         UIMng.Instance.GetUI<FieldUI>(UIMng.UIName.FieldUI).SetNameText(Character, Character.StatSystem.BaseStat.Name);
-
+        UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetDynamicIcon(SubWindow_Map_DynamicIcon.EMapIconOption.Enermy, Character);
         return Character;
     }
     public void RemoveMonster(int uniqueID)

@@ -111,13 +111,6 @@ public class CameraMng : TSingleton<CameraMng>
         cam.transform.SetParent(transform);
         cam.Enabled = false;
     }
-    private void OnGUI()
-    {
-        if (GUI.Button(new Rect(0, 0, 100, 100), "EQ_100, 100"))
-            EarthQuakeShake(CameraMng.Instance.GetCamera(CameraStyle.World).camera, 0.25f, 100, 1);
-        if (GUI.Button(new Rect(100, 0, 100, 100), "EQ_100, 100"))
-            GetCamera<PlayerCamera>(CameraStyle.Player).CameraAction_Look(0.7f);
-    }
 
     #region ShockWave
 

@@ -36,13 +36,8 @@ public class AssetMng : TSingleton<AssetMng>
     }
     public override void Init()
     {
-#if UNITY_EDITOR
-        path = "Cache";
-        directory = "Assets/AssetBundle";
-#else
         directory = Application.persistentDataPath + "/Cache/Bundle";
         path = Application.persistentDataPath + "/Cache";
-#endif
 
         StartCoroutine(SetPatchFile());
     }

@@ -49,8 +49,8 @@ public class Skill_FireBall : BaseSkill
         Caster.Animator.Play("FireBall");
         yield return new WaitForSeconds(0.66f);
 
-        if (Caster.Target == null)
-            yield return false;
+        if (Caster.Target == null || Caster.State == BaseCharacter.CharacterState.Death)
+            yield break;
 
         EAllyType targetAlly = EAllyType.Hostile;
         if (Caster.AllyType == EAllyType.Hostile)

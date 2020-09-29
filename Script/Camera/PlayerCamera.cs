@@ -20,7 +20,7 @@ public class PlayerCamera : BaseCamera
     public override void Init()
     {
         base.Init();
-        UICamera = transform.Find("UI Camera").GetComponent<Camera>();
+        UICamera = transform.Find("UI Render").GetComponent<Camera>();
         SetCameraPos();
     }
     public void SetCameraPos()

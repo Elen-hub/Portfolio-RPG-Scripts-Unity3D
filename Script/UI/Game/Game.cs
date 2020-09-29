@@ -15,9 +15,9 @@ public class Game : BaseUI
     public InputWindow InputWindow;
     public MapNameWindow MapNameWindow;
     public InfoWindow InfoWindow;
-    List<RaycastResult> m_hitList = new List<RaycastResult>();
     GameObject m_exitBTN;
 
+    int m_touchHandle = -1;
     float m_inputScreenPoint;
     Vector3 m_deltaScroll;
     bool m_useDragCameraRot;
@@ -68,77 +68,100 @@ public class Game : BaseUI
     void LateUpdate()
     {
 #if !UNITY_EDITOR
-        if (0 < Input.touchCount)
-            for (int t = 0; t < 1; ++t)
+        if (0 >= Input.touchCount)
+            return;
+
+        for (int t = 0; t < Input.touchCount; ++t)
+        {
+            if (Input.GetTouch(t).phase == TouchPhase.Began)
             {
-                if (Input.GetTouch(t).phase == TouchPhase.Began)
+                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(t).fingerId))
+                    return;
+
+                if (m_touchHandle != -1)
+                    continue;
+
+                m_useDragCameraRot = true;
+                m_touchHandle = t;
+
+                RaycastHit hit;
+                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f,
+                    1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
                 {
-                    RaycastHit hit;
-                    
-                    m_hitList.Clear();
-                    PointerEventData data = new PointerEventData(EventSystem.current);
-                    data.position = Input.mousePosition;
-                    EventSystem.current.RaycastAll(data, m_hitList);
-
-                    if (m_hitList.Count != 0)
-                        return;
-
-                    if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f, 
-                        1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
+                    switch (hit.transform.tag)
                     {
-                        switch (hit.transform.tag)
-                        {
-                            case "NPC":
-                                BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
-                                hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
-                                    UIMng.Instance.CLOSE = UIMng.UIName.Game;
-                                    UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
-                                });
-                                break;
-                            case "Enermy":
-                                InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
-                                break;
-                            default:
-                                BaseHero character = hit.transform.GetComponent<BaseHero>();
-                                InfoWindow.Enabled(character, character.Name, true);
-                                break;
-                        }
-                        //switch (hit.transform.tag)
-                        //{
-                        //    case "NPC":
-                        //        BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
-                        //        hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
-                        //            UIMng.Instance.CLOSE = UIMng.UIName.Game;
-                        //            UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
-                        //        });
-                        //        break;
-                        //    case "Ally":
-                        //    case "Hero":
-                        //    case "Enermy":
-                        //        InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
-                        //        break;
-                        //}
+                        case "NPC":
+                            BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
+                            hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () =>
+                            {
+                                UIMng.Instance.CLOSE = UIMng.UIName.Game;
+                                UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
+                            });
+                            break;
+                        case "Enermy":
+                            InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
+                            break;
+                        default:
+                            BaseHero character = hit.transform.GetComponent<BaseHero>();
+                            InfoWindow.Enabled(character, character.Name, true);
+                            break;
                     }
                 }
-                //else if (Input.GetTouch(t).phase == TouchPhase.Ended)  { }
-                //else if (Input.GetTouch(t).phase == TouchPhase.Moved || Input.GetTouch(t).phase == TouchPhase.Stationary) { }
             }
+
+            if (t != m_touchHandle)
+                continue;
+
+            if (Input.GetTouch(t).phase == TouchPhase.Moved)
+            {
+                if (m_useDragCameraRot)
+                {
+                    m_deltaScroll.y = Mathf.Clamp(Input.GetTouch(t).deltaPosition.x, -150, 150);
+                    CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).transform.eulerAngles += m_deltaScroll * Time.deltaTime * 6;
+                }
+            }
+            if (Input.GetTouch(t).phase == TouchPhase.Ended)
+            {    
+                m_useDragCameraRot = false;
+                m_deltaScroll = Vector3.zero;
+                m_touchHandle = -1;            
+            }
+        }
+       
 #else
         // 카메라 회전 시작
         if (Input.GetMouseButtonDown(0))
         {
             if (!GameSystem.PlayerCameraHoldRot)
             {
-                m_hitList.Clear();
-                PointerEventData data = new PointerEventData(EventSystem.current);
-                data.position = Input.mousePosition;
-                EventSystem.current.RaycastAll(data, m_hitList);
-
-                if (m_hitList.Count != 0)
+                if (EventSystem.current.IsPointerOverGameObject())
                     return;
 
+                Debug.Log("Hit");
                 m_useDragCameraRot = true;
                 m_inputScreenPoint = Input.mousePosition.x;
+
+                RaycastHit hit;
+                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
+                {
+                    switch (hit.transform.tag)
+                    {
+                        case "NPC":
+                            BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
+                            hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
+                                UIMng.Instance.CLOSE = UIMng.UIName.Game;
+                                UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
+                            });
+                            break;
+                        case "Enermy":
+                            InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
+                            break;
+                        default:
+                            BaseHero character = hit.transform.GetComponent<BaseHero>();
+                            InfoWindow.Enabled(character, character.Name, true);
+                            break;
+                    }
+                }
             }
         }
         // 카메라 회전 중 이라면
@@ -146,7 +169,8 @@ public class Game : BaseUI
         {
             if (!GameSystem.PlayerCameraHoldRot)
             {
-                m_deltaScroll.y = m_inputScreenPoint - Input.mousePosition.x;
+                m_deltaScroll.y = Mathf.Clamp(m_inputScreenPoint - Input.mousePosition.x, -150, 150);
+                // m_deltaScroll.y = m_inputScreenPoint - Input.mousePosition.x;
                 m_inputScreenPoint = Input.mousePosition.x;
                 CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).transform.eulerAngles += m_deltaScroll * Time.deltaTime * 5;
             }
@@ -154,38 +178,9 @@ public class Game : BaseUI
 
         if (Input.GetMouseButtonUp(0))
         {
-            RaycastHit hit;
-
-            m_hitList.Clear();
-            PointerEventData data = new PointerEventData(EventSystem.current);
-            data.position = Input.mousePosition;
-            EventSystem.current.RaycastAll(data, m_hitList);
             // 카메라 회전 종료
             m_useDragCameraRot = false;
             m_deltaScroll = Vector3.zero;
-            if (m_hitList.Count != 0)
-                return;
-
-            if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
-            {
-                switch(hit.transform.tag)
-                {
-                    case "NPC":
-                        BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
-                        hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
-                            UIMng.Instance.CLOSE = UIMng.UIName.Game;
-                            UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
-                        });
-                        break;
-                    case "Enermy":
-                        InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
-                        break;
-                    default:
-                        BaseHero character = hit.transform.GetComponent<BaseHero>();
-                        InfoWindow.Enabled(character, character.Name, true);
-                        break;
-                }
-            }
         }
 #endif
     }

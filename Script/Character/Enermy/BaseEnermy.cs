@@ -33,10 +33,8 @@ public abstract class BaseEnermy : BaseCharacter
     {
         UniqueID = uniqueID;
         AllyType = allyType;
-        m_collider = gameObject.AddComponent<SphereCollider>();
+        m_collider = transform.Find("AgroCollision").GetComponent<SphereCollider>();
         m_collider.radius = GameSystem.NormalMonsterColliderRange;
-        m_collider.isTrigger = true;
-
         m_initPosition = transform.position;
         Animator = GetComponent<Animator>();
 
