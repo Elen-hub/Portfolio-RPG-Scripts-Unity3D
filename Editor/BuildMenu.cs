@@ -61,6 +61,9 @@ public class BuildMenu
         {
             if (objs[i].layer == LayerMask.NameToLayer("Object") || objs[i].layer == LayerMask.NameToLayer("Road"))
             {
+                Renderer[] renderers = objs[i].GetComponentsInChildren<Renderer>();
+                for (int j = 0; j < renderers.Length; ++j)
+                    renderers[j].receiveShadows = false;
                 StaticEditorFlags flag = GameObjectUtility.GetStaticEditorFlags(objs[i]);
                 GameObjectUtility.SetStaticEditorFlags(objs[i], flag | StaticEditorFlags.ContributeGI | StaticEditorFlags.ReflectionProbeStatic);
             }

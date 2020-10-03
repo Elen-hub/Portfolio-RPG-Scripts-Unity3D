@@ -76,7 +76,7 @@ public class Game : BaseUI
             if (Input.GetTouch(t).phase == TouchPhase.Began)
             {
                 if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(t).fingerId))
-                    return;
+                    continue;
 
                 if (m_touchHandle != -1)
                     continue;
@@ -137,7 +137,6 @@ public class Game : BaseUI
                 if (EventSystem.current.IsPointerOverGameObject())
                     return;
 
-                Debug.Log("Hit");
                 m_useDragCameraRot = true;
                 m_inputScreenPoint = Input.mousePosition.x;
 

@@ -18,7 +18,7 @@ public class GameSystem
     public const float PlayerCameraMoveTime = 0.5f;
     public const float PlayerCameraMoveDistance = 0.3f;
 
-    public static Color ColorNormal = new Color(0, 0, 0);
+    public static Color ColorNormal = new Color(1, 1, 1);
     public static Color ColorMagic = new Color(0.22f, 0.41f, 1);
     public static Color ColorUnique = new Color(1, 0.4f, 1);
     public static Color ColorRelic = new Color(0.4f, 0, 1);

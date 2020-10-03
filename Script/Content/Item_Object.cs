@@ -57,27 +57,28 @@ public class Item_Object : MonoBehaviour
         transform.localScale = Vector3.one;
         Item = item;
 
-            switch (Item.Rarity)
-            {
-                case EItemRarity.Normal:
+        switch (Item.Rarity)
+        {
+            case EItemRarity.Normal:
                 m_particleColor.color = GameSystem.ColorNormal;
                 break;
-                case EItemRarity.Magic:
-                    m_particleColor.color = GameSystem.ColorMagic;
-                    break;
-                case EItemRarity.Unique:
-                    m_particleColor.color = GameSystem.ColorUnique;
-                    break;
-                case EItemRarity.Relic:
-                    m_particleColor.color = GameSystem.ColorRelic;
-                    break;
-                case EItemRarity.Legend:
-                    m_particleColor.color = GameSystem.ColorLegend;
-                    break;
-                case EItemRarity.Infinity:
-                    m_particleColor.color = GameSystem.ColorInfinity;
-                    break;
-            }
+            case EItemRarity.Magic:
+                m_particleColor.color = GameSystem.ColorMagic;
+                break;
+            case EItemRarity.Unique:
+                m_particleColor.color = GameSystem.ColorUnique;
+                break;
+            case EItemRarity.Relic:
+                m_particleColor.color = GameSystem.ColorRelic;
+                break;
+            case EItemRarity.Legend:
+                m_particleColor.color = GameSystem.ColorLegend;
+                break;
+            case EItemRarity.Infinity:
+                m_particleColor.color = GameSystem.ColorInfinity;
+                break;
+        }
+
         m_module.startColor = m_particleColor;
         m_module2.startColor = m_particleColor;
         m_module3.startColor = m_particleColor;

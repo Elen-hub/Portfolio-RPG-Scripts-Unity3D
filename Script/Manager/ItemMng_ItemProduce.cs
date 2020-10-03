@@ -32,7 +32,7 @@ public class ItemProduceFormula
     public System.HashFloat ProduceTime;
     public System.HashFloat CoolTime;
     DateTime m_possibleProduceTime = DateTime.Now;
-    public float GetCurrCoolTime{ get { return (float)(DateTime.Now - m_possibleProduceTime).TotalSeconds; } }
+    public float GetCurrCoolTime{ get { return 1+((float)(DateTime.Now - m_possibleProduceTime).TotalSeconds)/CoolTime; } }
     public bool PossibleProduceItem()
     {
         if (PlayerMng.Instance.MainPlayer.Gold < Gold)
