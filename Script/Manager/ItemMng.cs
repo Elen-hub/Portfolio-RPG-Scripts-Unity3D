@@ -9,16 +9,14 @@ public partial class ItemMng : TSingleton<ItemMng>
     Dictionary<int, Item_Base> m_itemDic = new Dictionary<int, Item_Base>();
     public Dictionary<int, Item_Base> GetItemList { get { return m_itemDic; } }
     Dictionary<int, Item_Object> ItemObjectList = new Dictionary<int, Item_Object>();
-    List<Item_Object> ItemObjectMemoryList = new List<Item_Object>();
+    Stack<Item_Object> m_itemObjectStack = new Stack<Item_Object>();
     public HashInt MaxInventorySize = 10;
     public List<Item_Base> Inventory = new List<Item_Base>();
     public void ClearItemObject()
     {
         foreach (Item_Object item in ItemObjectList.Values)
-        {
             item.Disabled();
-            ItemObjectMemoryList.Add(item);
-        }
+
         ItemObjectList.Clear();
     }
     public Item_Base FindItemInInventory(int handle)
@@ -55,7 +53,6 @@ public partial class ItemMng : TSingleton<ItemMng>
             AddItem(item.Item);
 
         ItemObjectList.Remove(uniqueID);
-        ItemObjectMemoryList.Add(item);
     }
     public void DropItem(int uniqueID, int handle, Vector3 position, object value = null)
     {
@@ -70,20 +67,12 @@ public partial class ItemMng : TSingleton<ItemMng>
                 break;
         }
         Item_Object Object;
-        for(int i =0; i<ItemObjectMemoryList.Count; ++i)
-        {
-            if(ItemObjectMemoryList[i].Item == null)
-            {
-                Object = ItemObjectMemoryList[i];
-                Object.Enabled(item, position);
-                ItemObjectList.Add(uniqueID, Object);
-                ItemObjectMemoryList.Remove(Object);
-                return;
-            }
-        }
-        Object = Instantiate(Resources.Load<Item_Object>("ETC/Item_Object"), transform);
+        if (m_itemObjectStack.Count > 0)
+            Object = m_itemObjectStack.Pop();
+        else
+            Object = Instantiate(Resources.Load<Item_Object>("ETC/Item_Object"), transform).Init(ref m_itemObjectStack);
+
         ItemObjectList.Add(uniqueID, Object);
-        Object.Init();
         Object.Enabled(item, position);
     }
     public bool CheckInventoryCount(Item_Base item)

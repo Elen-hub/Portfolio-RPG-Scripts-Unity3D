@@ -6,6 +6,7 @@ public class Item_Object : MonoBehaviour
 {
     public GameObject GameObject;
     public Item_Base Item;
+    Stack<Item_Object> m_itemObjectStack;
     Dictionary<EItemType, GameObject> m_itemModel = new Dictionary<EItemType, GameObject>();
     ParticleSystem m_glowParticle;
     ParticleSystem m_powerGlowPaticle;
@@ -20,8 +21,9 @@ public class Item_Object : MonoBehaviour
     float m_removeElasedTime;
     bool m_isRoot;
     int m_direction =1;
-    public void Init()
+    public Item_Object Init(ref Stack<Item_Object> itemObjectStack)
     {
+        m_itemObjectStack = itemObjectStack;
         m_collider = GetComponent<SphereCollider>();
         if (m_collider == null)
             m_collider = gameObject.AddComponent<SphereCollider>();
@@ -46,6 +48,8 @@ public class Item_Object : MonoBehaviour
         m_module = m_glowParticle.main;
         m_module2 = m_powerGlowPaticle.main;
         m_module3 = m_powerGlowPaticle.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+
+        return this;
     }
     public void Enabled(Item_Base item, Vector3 position)
     {
@@ -82,10 +86,10 @@ public class Item_Object : MonoBehaviour
         m_module.startColor = m_particleColor;
         m_module2.startColor = m_particleColor;
         m_module3.startColor = m_particleColor;
-        m_glowParticle.Play();
-        m_powerGlowPaticle.Play();
         m_itemModel[Item.Type].SetActive(true);
         GameObject.SetActive(true);
+        m_glowParticle.Play();
+        m_powerGlowPaticle.Play();
         StartCoroutine(DropAction(position));
     }
     public void Disabled()
@@ -94,6 +98,7 @@ public class Item_Object : MonoBehaviour
         m_powerGlowPaticle.Stop();
         m_itemModel[Item.Type].SetActive(false);
         Item = null;
+        m_itemObjectStack.Push(this);
         GameObject.SetActive(false);
     }
     private void Update()

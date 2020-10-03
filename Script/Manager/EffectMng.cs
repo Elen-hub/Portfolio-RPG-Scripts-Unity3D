@@ -8,28 +8,20 @@ public enum EMeshEffectType
 }
 public class EffectMng : TSingleton<EffectMng>
 {
-    Dictionary<string, List<BaseEffect>> m_effectMemoryDic = new Dictionary<string, List<BaseEffect>>();
-    Dictionary<string, List<BaseMissile>> m_missileMemoryDic = new Dictionary<string, List<BaseMissile>>();
+    Dictionary<string, Stack<BaseEffect>> m_effectMemoryDic = new Dictionary<string, Stack<BaseEffect>>();
+    Dictionary<string, Stack<BaseMissile>> m_missileMemoryDic = new Dictionary<string, Stack<BaseMissile>>();
     public BaseEffect FindEffect(string effectPath, Transform effectPivot, float time)
     {
         if (!m_effectMemoryDic.ContainsKey(effectPath))
-            m_effectMemoryDic.Add(effectPath, new List<BaseEffect>());
+            m_effectMemoryDic.Add(effectPath, new Stack<BaseEffect>());
 
+        Stack<BaseEffect> effect = m_effectMemoryDic[effectPath];
         BaseEffect e = null;
+        if (effect.Count > 0)
+            e = effect.Pop();
+        else
+            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPivot.position, Quaternion.identity, transform).Init(ref effect, time);
 
-        for (int i = 0; i < m_effectMemoryDic[effectPath].Count; ++i)
-        {
-            if (m_effectMemoryDic[effectPath][i].gameObject.activeSelf)
-                continue;
-            e = m_effectMemoryDic[effectPath][i];
-            break;
-        }
-        if (e == null)
-        {
-            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPivot.position, Quaternion.identity, transform);
-            e.Init(time);
-            m_effectMemoryDic[effectPath].Add(e);
-        }
         e.Enabled(effectPivot);
         e.ResetTargetTime = time;
         return e;
@@ -37,23 +29,15 @@ public class EffectMng : TSingleton<EffectMng>
     public BaseEffect FindEffect(string effectPath, Vector3 effectPos, Vector3 eulerAngle, float time)
     {
         if (!m_effectMemoryDic.ContainsKey(effectPath))
-            m_effectMemoryDic.Add(effectPath, new List<BaseEffect>());
+            m_effectMemoryDic.Add(effectPath, new Stack<BaseEffect>());
 
+        Stack<BaseEffect> effect = m_effectMemoryDic[effectPath];
         BaseEffect e = null;
+        if (effect.Count > 0)
+            e = effect.Pop();
+        else
+            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPos, Quaternion.Euler(eulerAngle), transform).Init(ref effect, time);
 
-        for (int i = 0; i < m_effectMemoryDic[effectPath].Count; ++i)
-        {
-            if (m_effectMemoryDic[effectPath][i].gameObject.activeSelf)
-                continue;
-            e = m_effectMemoryDic[effectPath][i];
-            break;
-        }
-        if (e == null)
-        {
-            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPos, Quaternion.Euler(eulerAngle), transform);
-            e.Init(time);
-            m_effectMemoryDic[effectPath].Add(e);
-        }
         e.Enabled(effectPos, eulerAngle);
         return e;
     }
@@ -76,24 +60,16 @@ public class EffectMng : TSingleton<EffectMng>
     public T FindMissile<T>(string missilePath, float speed) where T : BaseMissile
     {
         if (!m_missileMemoryDic.ContainsKey(missilePath))
-            m_missileMemoryDic.Add(missilePath, new List<BaseMissile>());
+            m_missileMemoryDic.Add(missilePath, new Stack<BaseMissile>());
 
+        Stack<BaseMissile> missileStack = m_missileMemoryDic[missilePath];
         BaseMissile e = null;
 
-        for(int i =0; i<m_missileMemoryDic[missilePath].Count; ++i)
-        {
-            if (m_missileMemoryDic[missilePath][i].gameObject.activeSelf)
-                continue;
+        if (missileStack.Count > 0)
+            e = missileStack.Pop();
+        else
+            e = Instantiate(Resources.Load<BaseMissile>("Missile/" + missilePath), transform).Init(ref missileStack, speed);
 
-            e = m_missileMemoryDic[missilePath][i];
-            break;
-        }
-        if(e == null)
-        {
-            e = Instantiate(Resources.Load<BaseMissile>("Missile/" + missilePath), transform);
-            e.Init(speed);
-            m_missileMemoryDic[missilePath].Add(e);
-        }
         return e as T;
     }
     public override void Init()

@@ -11,7 +11,6 @@ public class SystemMessage : BaseUI
     {
         Main,
         Sub,
-        Tutorial,
     }
     
     public struct Message
@@ -22,19 +21,13 @@ public class SystemMessage : BaseUI
     }
 
     Text m_itemMessage;
-    List<MainMessage> m_mainMessageList = new List<MainMessage>();
+    Stack<MainMessage> m_mainMessageStack = new Stack<MainMessage>();
     Transform m_mainMessageGrid;
     Text m_subMessage;
-    Text m_tutorialMessage;
+    Queue<Message> m_mainQueue = new Queue<Message>();
 
-    Dictionary<MessageType, List<Message>> m_messageDic = new Dictionary<MessageType, List<Message>>();
-    Coroutine m_tutorialTextCoroutine;
-
-    float m_mainElapsedTime = 2;
+    float m_mainElapsedTime;
     float m_subElspasedTime;
-
-    int m_mainPushCount = 0;
-    int m_subPushCount = 0;
 
     bool m_useMain;
     bool m_useSub;
@@ -43,102 +36,71 @@ public class SystemMessage : BaseUI
     {
         m_mainMessageGrid = transform.Find("MainMessageGrid");
         m_subMessage = transform.Find("SubMessage").GetComponent<Text>();
-        m_tutorialMessage = transform.Find("TutorialMessage").GetComponent<Text>();
-
-        m_messageDic.Add(MessageType.Main, new List<Message>());
-        m_messageDic.Add(MessageType.Sub, new List<Message>());
-        m_messageDic.Add(MessageType.Tutorial, new List<Message>());
 
         Instance = this;
     }
-
     public void PushMessage(MessageType type , string str)
     {
-        Message msg = new Message()
-        {
-            Str = str,
-        };
-
         if (type == MessageType.Main)
-            msg.Color = Color.white;
+        {
+            Message msg = new Message()
+            {
+                Str = str,
+                Color = Color.white,
+            };
+            if (m_useMain)
+            {
+                m_mainQueue.Enqueue(msg);
+            }
+            else
+            {
+                m_useMain = true;
+                PlayMainMessage(msg);
+            }
+        }
         else if (type == MessageType.Sub)
         {
-            msg.Color = Color.red;
-            PlaySound();
-        }
-        else if (type == MessageType.Tutorial)
-            msg.Color = Color.white;
-
-        m_messageDic[type].Add(msg);
-    }
-
-    public void PushMessage(MessageType type, string str, Color color)
-    {
-        Message msg = new Message()
-        {
-            Str = str,
-            Color = color,
-        };
-
-        m_messageDic[type].Add(msg);
-    }
-
-    public void Clear()
-    {
-
-    }
-
-    public void LateUpdate()
-    {
-        m_mainElapsedTime += Time.deltaTime;
-
-        if (m_messageDic[MessageType.Main].Count > m_mainPushCount)
-            m_useMain = true;
-
-        if (m_messageDic[MessageType.Sub].Count > m_subPushCount)
-        {
             m_subElspasedTime = 0;
-            m_subPushCount = m_messageDic[MessageType.Sub].Count;
-            m_subMessage.text = m_messageDic[MessageType.Sub][m_subPushCount - 1].Str;
+            m_subMessage.text = str;
+            PlaySound();
+
             m_useSub = true;
         }
+    }
+    void PlayMainMessage(Message msg)
+    {
+        MainMessage mainMessage;
+        if (m_mainMessageStack.Count > 0)
+            mainMessage = m_mainMessageStack.Pop();
+        else
+            mainMessage = Instantiate(Resources.Load<MainMessage>("UI/Instance/MainMessage"), m_mainMessageGrid).Init(ref m_mainMessageStack);
+
+        mainMessage.Enabled(msg);
+        m_mainElapsedTime = 0;
+    }
+    public void LateUpdate()
+    {
         if (m_useMain)
         {
-            if(m_mainElapsedTime>2)
+            m_mainElapsedTime += Time.deltaTime;
+            if (m_mainElapsedTime>2)
             {
-                for (int i = 0; i < m_mainMessageList.Count; ++i)
-                {
-                    if (!m_mainMessageList[i].gameObject.activeSelf)
-                    {
-                        m_mainMessageList[i].Enabled(m_messageDic[MessageType.Main][m_mainPushCount]);
-                        goto Setting;
-                    }
-                }
-
-                MainMessage message = Instantiate(Resources.Load<MainMessage>("UI/Instance/MainMessage"), m_mainMessageGrid);
-                m_mainMessageList.Add(message);
-                message.Init();
-                message.Enabled(m_messageDic[MessageType.Main][m_mainPushCount]);
-
-                Setting:
-                m_mainElapsedTime = 0;
-                m_useMain = false;
-                ++m_mainPushCount;
+                m_useMain = m_mainQueue.Count > 0;
+                if (m_useMain)
+                    PlayMainMessage(m_mainQueue.Dequeue());
             }
         }
         if (m_useSub)
         {
             m_subElspasedTime += Time.deltaTime;
-            Message msg = m_messageDic[MessageType.Sub][m_subPushCount - 1];
-
             if (m_subElspasedTime < 2.2f)
             {
-                m_subMessage.color = Color.Lerp(Color.clear, msg.Color, m_subElspasedTime * 5f);
+                m_subMessage.color = Color.Lerp(Color.clear, Color.red, m_subElspasedTime * 5f);
                 return;
             }
             if (m_subElspasedTime < 0.4f + 2 && m_subElspasedTime > 2.2f)
             {
-                m_subMessage.color = Color.Lerp(msg.Color, Color.clear, (m_subElspasedTime - (2.2f)) * 5f);
+                m_subMessage.color = Color.Lerp(Color.red, Color.clear, (m_subElspasedTime - (2.2f)) * 5f);
                 return;
             }
 

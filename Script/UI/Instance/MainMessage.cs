@@ -5,14 +5,17 @@ using UnityEngine.UI;
 
 public class MainMessage : MonoBehaviour
 {
+    Stack<MainMessage> m_stack;
     Text m_text;
     Color m_color = Color.white;
     Vector3 m_nextPos;
     float m_targetTime = 3;
     float m_elapsedTime;
-    public void Init()
+    public MainMessage Init(ref Stack<MainMessage> stack)
     {
         m_text = GetComponentInChildren<Text>();
+        m_stack = stack;
+        return this;
     }
     public void Enabled(SystemMessage.Message message)
     {
@@ -24,6 +27,7 @@ public class MainMessage : MonoBehaviour
     }
     public void Disabled()
     {
+        m_stack.Push(this);
         gameObject.SetActive(false);
     }
     private void Update()

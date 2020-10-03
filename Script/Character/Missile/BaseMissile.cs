@@ -10,6 +10,7 @@ public enum EMissileType
 }
 public class BaseMissile : MonoBehaviour
 {
+    Stack<BaseMissile> m_missileStack;
     protected BaseCharacter m_caster;
     protected EAttackType m_attackType;
     protected float m_damage;
@@ -33,12 +34,14 @@ public class BaseMissile : MonoBehaviour
 
     [SerializeField] protected AnimationCurve m_curve = AnimationCurve.Linear(0, 1, 1, 1);
     [SerializeField] protected float m_maxHeight = 1;
-    public virtual void Init(float speed)
+    public virtual BaseMissile Init(ref Stack<BaseMissile> missileStack, float speed)
     {
+        m_missileStack = missileStack;
         m_collider = GetComponent<Collider>();
         m_speed = speed;
         m_missile = transform.Find("Missile").gameObject;
         m_effect = transform.Find("Effect").gameObject;
+        return this;
     }
     public void Enabled(BaseCharacter caster, Vector3 launcherAxis, Vector3 targetAxis)
     {
@@ -63,6 +66,7 @@ public class BaseMissile : MonoBehaviour
     {
         m_missile.SetActive(false);
         m_effect.SetActive(false);
+        m_missileStack.Push(this);
         gameObject.SetActive(false);
     }
     public virtual void FixedUpdate()
