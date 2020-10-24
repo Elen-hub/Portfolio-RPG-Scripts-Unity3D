@@ -266,7 +266,7 @@ public class MapEditor : EditorWindow
 
             EditorGUI.LabelField(new Rect(rect.x, rect.y + posY, rect.width / 2, 20), "Handle: ");
             EditorDB.MapList[SelectHandle].PortalList[i].Handle = EditorGUI.IntField(new Rect(rect.x + rect.width / 2, rect.y + posY, rect.width / 2, 20), EditorDB.MapList[SelectHandle].PortalList[i].Handle);
-            posY += 20;
+            posY += 20; 
             if (EditorDB.MapList.ContainsKey(EditorDB.MapList[SelectHandle].PortalList[i].Handle))
                 EditorGUI.LabelField(new Rect(rect.x, rect.y + posY, rect.width, 20), "MapName: " + EditorDB.MapList[EditorDB.MapList[SelectHandle].PortalList[i].Handle].MapName);
             else
@@ -280,7 +280,7 @@ public class MapEditor : EditorWindow
             if (rect.x > 320 + 512)
             {
                 rect.x = 320;
-                rect.y += 125;
+                rect.y += 150;
             }
 
             GUI.DrawTexture(new Rect(315 + 256 + EditorDB.MapList[SelectHandle].PortalList[i].DeltaCoord.x * CoordScaleFactorX, 35 + 256 - EditorDB.MapList[SelectHandle].PortalList[i].DeltaCoord.z * CoordScaleFactorY, 10, 10), PortalDeltaIcon);
@@ -328,6 +328,7 @@ public class MapEditor : EditorWindow
             GUI.DrawTexture(new Rect(315 + 256 + EditorDB.MapList[SelectHandle].MatchPortalList[i].Coord.x * CoordScaleFactorX, 35 + 256 - EditorDB.MapList[SelectHandle].MatchPortalList[i].Coord.z * CoordScaleFactorY, 10, 10), MatchPortalIcon);
         }
     }
+    
     void InputMonster()
     {
         float posY = 0;
@@ -343,7 +344,7 @@ public class MapEditor : EditorWindow
 
         for (int i = 0; i < EditorDB.MapList[SelectHandle].MonsterList.Count; ++i)
         {
-            if (i == 18)
+            if (i == 13)
             {
                 rect.x = 1400;
                 posY = 30;

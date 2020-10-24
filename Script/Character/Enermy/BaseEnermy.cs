@@ -155,6 +155,7 @@ public abstract class BaseEnermy : BaseCharacter
             {
                 if (m_patternList[i].RangeCheck())
                 {
+                    Animator.SetInteger("State", 0);
                     m_patternList[i].Use();
                     return;
                 }

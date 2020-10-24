@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class Enermy_Boss_CloseAttack : BaseEnermy
+public class Enermy_Boss_CloseAttack : BaseEnermy
 {
     BaseCharacter FindTarget()
     {

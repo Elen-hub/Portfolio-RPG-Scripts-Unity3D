@@ -36,6 +36,7 @@ public enum EMapAreaGroup
 {
     None,
     TwilightDesert,
+    EmpireOfEstela,
 }
 public class Map
 {

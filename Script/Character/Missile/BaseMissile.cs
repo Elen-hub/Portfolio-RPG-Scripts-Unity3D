@@ -76,7 +76,7 @@ public class BaseMissile : MonoBehaviour
             m_effectTime += Time.fixedDeltaTime;
 
             if (m_effectTime > 2)
-                gameObject.SetActive(false);
+                Disabled();
 
             return;
         }

@@ -81,7 +81,7 @@ public class ParticleDefaultMissile : BaseMissile
             m_effectTime += Time.fixedDeltaTime;
 
             if (m_effectTime > 2)
-                gameObject.SetActive(false);
+                Disabled();
 
             return;
         }

@@ -54,6 +54,7 @@ public class Game : BaseUI
         m_exitBTN.SetActive(MapMng.Instance.CurrMap.Type == EMapType.Private);
         InputWindow.Enabled(GameSystem.Joystick);
         DeviceWindow.Enabled();
+        m_touchHandle = -1;
 
         gameObject.SetActive(true);
     }
@@ -69,7 +70,10 @@ public class Game : BaseUI
     {
 #if !UNITY_EDITOR
         if (0 >= Input.touchCount)
+        {
+            m_touchHandle = -1;
             return;
+        }
 
         for (int t = 0; t < Input.touchCount; ++t)
         {

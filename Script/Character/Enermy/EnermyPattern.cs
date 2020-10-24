@@ -68,6 +68,15 @@ public class EnermyPattern
             case "FireWall":
                 m_skill = caster.gameObject.AddComponent<Skill_FireWall>().Init(caster);
                 break;
+            case "HammerStorm":
+                m_skill = caster.gameObject.AddComponent<Skill_HammerStorm>().Init(caster);
+                break;
+            case "HammerStrike": 
+                m_skill = caster.gameObject.AddComponent<Skill_HammerStrike>().Init(caster);
+                break;
+            case "RageAssault":
+                m_skill = caster.gameObject.AddComponent<Skill_RageAssault>().Init(caster);
+                break;
         }
 
         return this;

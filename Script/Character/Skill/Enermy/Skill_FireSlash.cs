@@ -81,7 +81,7 @@ public class Skill_FireSlash : BaseSkill
             characterList[i].Stun(1);
 
             if (character.tag == "Player")
-                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Absolutely, Enermy.UniqueID, character.UniqueID, Enermy.StatSystem.GetAttackDamage * 3, 0.5f);
+                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Critical, Enermy.UniqueID, character.UniqueID, Enermy.StatSystem.GetAttackDamage * 3, 0.5f);
         }
     }
     void FireSlashEnd()

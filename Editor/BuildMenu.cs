@@ -64,6 +64,7 @@ public class BuildMenu
                 Renderer[] renderers = objs[i].GetComponentsInChildren<Renderer>();
                 for (int j = 0; j < renderers.Length; ++j)
                     renderers[j].receiveShadows = false;
+
                 StaticEditorFlags flag = GameObjectUtility.GetStaticEditorFlags(objs[i]);
                 GameObjectUtility.SetStaticEditorFlags(objs[i], flag | StaticEditorFlags.ContributeGI | StaticEditorFlags.ReflectionProbeStatic);
             }
@@ -76,15 +77,15 @@ public class BuildMenu
         UnityEditor.LightmapEditorSettings.lightmapper = LightmapEditorSettings.Lightmapper.ProgressiveGPU;
         UnityEditor.LightmapEditorSettings.prioritizeView = true;
         UnityEditor.LightmapEditorSettings.directSampleCount = 10;
-        UnityEditor.LightmapEditorSettings.indirectSampleCount = 100;
+        UnityEditor.LightmapEditorSettings.indirectSampleCount = 50;
         UnityEditor.LightmapEditorSettings.bounces = 2;
         UnityEditor.LightmapEditorSettings.filteringMode = LightmapEditorSettings.FilterMode.Auto;
 
-        UnityEditor.LightmapEditorSettings.bakeResolution = 20;
+        UnityEditor.LightmapEditorSettings.bakeResolution = 10;
         UnityEditor.LightmapEditorSettings.padding = 2;
-        UnityEditor.LightmapEditorSettings.maxAtlasSize = 256;
+        UnityEditor.LightmapEditorSettings.maxAtlasSize = 512;
         UnityEditor.LightmapEditorSettings.textureCompression = true;
-        UnityEditor.LightmapEditorSettings.enableAmbientOcclusion = false;
+        UnityEditor.LightmapEditorSettings.enableAmbientOcclusion = true;
 
         UnityEditor.Lightmapping.BakeAsync();
     }

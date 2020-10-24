@@ -69,6 +69,8 @@ public class SystemMessage : BaseUI
     }
     void PlayMainMessage(Message msg)
     {
+        Stack<string> a = new Stack<string>();
+        a.ToArray();
         MainMessage mainMessage;
         if (m_mainMessageStack.Count > 0)
             mainMessage = m_mainMessageStack.Pop();

@@ -85,7 +85,7 @@ public class Skill_FireAttack : BaseSkill
 
             EffectMng.Instance.FindEffect("Enermy/Effect_Enermy_FireSwordHit", character.AttachSystem.GetAttachPoint(EAttachPoint.Chest).position, character.transform.eulerAngles, 2);
             if (character.tag == "Player")
-                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Absolutely, Enermy.UniqueID, character.UniqueID, character.StatSystem.GetHP * 0.35f, 1);
+                NetworkMng.Instance.NotifyReceiveDamage(EAttackType.Critical, Enermy.UniqueID, character.UniqueID, character.StatSystem.GetHP * 0.35f, 1);
         }
     }
 }
