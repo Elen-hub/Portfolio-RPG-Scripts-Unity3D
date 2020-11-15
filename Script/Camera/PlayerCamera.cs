@@ -23,6 +23,11 @@ public class PlayerCamera : BaseCamera
         UICamera = transform.Find("UI Render").GetComponent<Camera>();
         SetCameraPos();
     }
+    public void SetCameraAngle(float angle)
+    {
+        camera.transform.eulerAngles = new Vector3(angle, camera.transform.eulerAngles.y, camera.transform.eulerAngles.z);
+        UICamera.transform.eulerAngles = new Vector3(angle, UICamera.transform.eulerAngles.y, UICamera.transform.eulerAngles.z);
+    }
     public void SetCameraPos()
     {
         camera.transform.localPosition = new Vector3(0, GameSystem.PlayerCameraHeight, -GameSystem.PlayerCameraWidth);

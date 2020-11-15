@@ -85,7 +85,6 @@ public abstract class BaseEnermy : BaseCharacter
         {
             RESET();
             StatSystem.RecoveryHP(StatSystem.GetHP);
-            State = CharacterState.Idle;
             m_collider.enabled = true;
         }
     }
@@ -216,7 +215,7 @@ public abstract class BaseEnermy : BaseCharacter
             Animator.SetTrigger("Hit");
         }
     }
-    protected void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (Target != null)
             return;

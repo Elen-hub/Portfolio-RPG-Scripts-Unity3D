@@ -89,7 +89,7 @@ public class Game : BaseUI
                 m_touchHandle = t;
 
                 RaycastHit hit;
-                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f,
+                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 30,
                     1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
                 {
                     switch (hit.transform.tag)
@@ -145,7 +145,7 @@ public class Game : BaseUI
                 m_inputScreenPoint = Input.mousePosition.x;
 
                 RaycastHit hit;
-                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 15f, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
+                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 30, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
                 {
                     switch (hit.transform.tag)
                     {

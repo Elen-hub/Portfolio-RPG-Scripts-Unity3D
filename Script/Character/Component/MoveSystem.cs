@@ -24,6 +24,11 @@ public class MoveSystem : MonoBehaviour
     {
         set { m_navMesh.isStopped = value; m_navMesh.velocity = Vector3.zero; }
     }
+    public void SetDestination(Vector3 pos, float speed)
+    {
+        m_navMesh.SetDestination(pos);
+        m_navMesh.speed = speed;
+    }
     public Vector3 GetCurrAxis { get { return m_axis; } }
     public Vector3 SetPosition
     {
@@ -94,16 +99,25 @@ public class MoveSystem : MonoBehaviour
         m_navMesh.isStopped = false;
         m_navMesh.speed = m_moveSpeed;
         m_navMesh.SetDestination(pos);
-
-        if (m_navMesh.remainingDistance <= distance)
+        //if (Vector3.Distance(m_navMesh.destination, m_navMesh.transform.position) <= m_navMesh.stoppingDistance)
+        //{
+        //    if (!m_navMesh.hasPath || m_navMesh.velocity.sqrMagnitude == 0f)
+        //    {
+        //        Debug.Log("완료");
+        //    }
+        //}
+        if (!m_navMesh.pathPending)
         {
-            if (!m_navMesh.hasPath || Mathf.Abs(m_navMesh.velocity.sqrMagnitude) < float.Epsilon)
-                return true;
-
-            m_navMesh.isStopped = true;
-            m_navMesh.velocity = Vector3.zero;
-            m_character.State = BaseCharacter.CharacterState.Idle;
-            return true;
+            if (m_navMesh.remainingDistance <= distance)
+            {
+                if (!m_navMesh.hasPath || m_navMesh.velocity.sqrMagnitude == 0f)
+                {
+                    m_navMesh.isStopped = true;
+                    m_navMesh.velocity = Vector3.zero;
+                    m_character.State = BaseCharacter.CharacterState.Idle;
+                    return true;
+                }
+            }
         }
         return false;
     }

@@ -17,9 +17,6 @@ public class TargetUI : BaseFieldUI
     public void Enabled(BaseCharacter target)
     {
         m_character = target;
-        m_eulerAngle.x = m_camera.eulerAngles.x;
-        m_eulerAngle.z += Time.deltaTime * 180;
-        transform.localEulerAngles = m_eulerAngle;
         gameObject.SetActive(true);
     }
     public void Disabled()
@@ -34,6 +31,9 @@ public class TargetUI : BaseFieldUI
             Disabled();
             return;
         }
+        m_eulerAngle.x = 90 - m_camera.eulerAngles.x;
+        m_eulerAngle.z += Time.deltaTime * 180;
+        transform.localEulerAngles = m_eulerAngle;
         transform.position = m_character.transform.position;
     }
 }

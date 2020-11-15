@@ -71,10 +71,10 @@ public class CameraMng : TSingleton<CameraMng>
             return;
 
         if ((style & CameraStyle.UI) != 0)
-        { 
-            m_cameraDic[CameraStyle.UI].Enabled = (style & CameraStyle.UI) != 0;
+        {
+            m_cameraDic[CameraStyle.UI].Enabled = true;
             CurrentCamera = m_cameraDic[CameraStyle.UI];
-        }
+        } 
         if ((style & CameraStyle.World) != 0)
         {
             m_cameraDic[CameraStyle.World].Enabled = true;
