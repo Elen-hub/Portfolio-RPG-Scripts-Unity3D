@@ -8,37 +8,30 @@ public enum EMeshEffectType
 }
 public class EffectMng : TSingleton<EffectMng>
 {
-    Dictionary<string, Stack<BaseEffect>> m_effectMemoryDic = new Dictionary<string, Stack<BaseEffect>>();
     Dictionary<string, Stack<BaseMissile>> m_missileMemoryDic = new Dictionary<string, Stack<BaseMissile>>();
+    Dictionary<string, MemoryPool<BaseEffect>> m_effectMemoryPool = new Dictionary<string, MemoryPool<BaseEffect>>();
     public BaseEffect FindEffect(string effectPath, Transform effectPivot, float time)
     {
-        if (!m_effectMemoryDic.ContainsKey(effectPath))
-            m_effectMemoryDic.Add(effectPath, new Stack<BaseEffect>());
+        if (!m_effectMemoryPool.ContainsKey(effectPath))
+            m_effectMemoryPool.Add(effectPath, new MemoryPool<BaseEffect>().Init());
 
-        Stack<BaseEffect> effect = m_effectMemoryDic[effectPath];
-        BaseEffect e = null;
-        if (effect.Count > 0)
-            e = effect.Pop();
-        else
-            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPivot.position, Quaternion.identity, transform).Init(ref effect, time);
-
+        MemoryPool<BaseEffect> pool = m_effectMemoryPool[effectPath];
+        BaseEffect e = m_effectMemoryPool[effectPath].GetItem();
+        if(!e) e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), transform).Init(pool.Register, time);
         e.Enabled(effectPivot);
         e.ResetTargetTime = time;
         return e;
     }
     public BaseEffect FindEffect(string effectPath, Vector3 effectPos, Vector3 eulerAngle, float time)
     {
-        if (!m_effectMemoryDic.ContainsKey(effectPath))
-            m_effectMemoryDic.Add(effectPath, new Stack<BaseEffect>());
+        if (!m_effectMemoryPool.ContainsKey(effectPath))
+            m_effectMemoryPool.Add(effectPath, new MemoryPool<BaseEffect>().Init());
 
-        Stack<BaseEffect> effect = m_effectMemoryDic[effectPath];
-        BaseEffect e = null;
-        if (effect.Count > 0)
-            e = effect.Pop();
-        else
-            e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), effectPos, Quaternion.Euler(eulerAngle), transform).Init(ref effect, time);
-
+        MemoryPool<BaseEffect> pool = m_effectMemoryPool[effectPath];
+        BaseEffect e = m_effectMemoryPool[effectPath].GetItem();
+        if(!e) e = Instantiate(Resources.Load<BaseEffect>("Effect/" + effectPath), transform).Init(pool.Register, time);
         e.Enabled(effectPos, eulerAngle);
+        e.ResetTargetTime = time;
         return e;
     }
     public PSMeshRendererUpdater FindMeshEffect(Transform target, EMeshEffectType type)

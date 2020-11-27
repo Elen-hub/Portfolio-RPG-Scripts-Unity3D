@@ -120,6 +120,9 @@ public partial class ItemMng : TSingleton<ItemMng>
     public void RemoveItem(Item_Base item, int number)
     {
         IItemNumber ItemNumber = item as IItemNumber;
+        if (ItemNumber == null)
+            return;
+
         ItemNumber.Number -= number;
         if (ItemNumber.Number <= 0)
             Inventory.Remove(item);

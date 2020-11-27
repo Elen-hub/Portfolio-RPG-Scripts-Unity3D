@@ -7,7 +7,7 @@ public class SubWindow_Map : MonoBehaviour
 {
     Image m_playerImg;
     List<SubWindow_Map_DynamicIcon> m_dynamicIcon = new List<SubWindow_Map_DynamicIcon>();
-    List<SubWindow_Map_StaticIcon> m_staticIcon = new List<SubWindow_Map_StaticIcon>();
+    List<SubWindow_Map_StaticIcon> m_staticIcon = new List<SubWindow_Map_StaticIcon>(8);
     Transform m_mapGrid;
     Image m_mapImg;
     Vector3 m_coord;

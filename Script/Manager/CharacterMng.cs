@@ -36,7 +36,6 @@ public class CharacterMng : TSingleton<CharacterMng>
     Dictionary<int, List<BaseEnermy>> m_enermyMemoryDic = new Dictionary<int, List<BaseEnermy>>();
     Dictionary<int, NPCStat> m_npcStat = new Dictionary<int, NPCStat>();
 
-    public List<BaseCharacter> RespawnList = new List<BaseCharacter>();
     public Dictionary<int, BaseCharacter> CurrCharacters = new Dictionary<int, BaseCharacter>();
     public Dictionary<int, Quest> m_questDic = new Dictionary<int, Quest>();
     public Dictionary<int, Quest> ClearQuest { get; private set; } = new Dictionary<int, Quest>();

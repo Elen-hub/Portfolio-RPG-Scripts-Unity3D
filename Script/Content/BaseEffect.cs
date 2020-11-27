@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseEffect : MonoBehaviour
 {
-    Stack<BaseEffect> m_effectStack;
+    UnityEngine.Events.UnityAction<BaseEffect> DisabledCallback;
     AudioSource[] m_sounds;
     Transform m_effectPivot;
     float m_effectTime;
@@ -12,16 +12,14 @@ public class BaseEffect : MonoBehaviour
     float m_targetTime;
     float m_elapsedTime;
     public float ResetTargetTime { set { m_elapsedTime = 0; m_targetTime = value; } }
-
-    public virtual BaseEffect Init(ref Stack<BaseEffect> effectStack, float effectTime)
+    public virtual BaseEffect Init(UnityEngine.Events.UnityAction<BaseEffect> callback, float effectTime)
     {
         gameObject.SetActive(false);
         InitSound();
 
         m_effectTime = effectTime;
         m_lifeTime = 0;
-        m_effectStack = effectStack;
-
+        DisabledCallback = callback;
         return this;
     }
     protected virtual void InitSound()
@@ -60,7 +58,7 @@ public class BaseEffect : MonoBehaviour
     public void Disabled()
     {
         m_effectPivot = null;
-        m_effectStack.Push(this);
+        DisabledCallback(this);
         gameObject.SetActive(false);
     }
     public void DisabledTime()
