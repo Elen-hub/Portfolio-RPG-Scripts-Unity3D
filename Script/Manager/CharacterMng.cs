@@ -785,16 +785,51 @@ public class CharacterMng : TSingleton<CharacterMng>
                 }
             }
         }
+        bool mainQuest = false;
+        int NpcHandle = 0;
         foreach (Quest quest in m_questDic.Values)
         {
-            if (!quest.Clear && !quest.Accept)
+            // 퀘스트를 받은상태라면 넘어감.
+            if (quest.Accept)
+                continue;
+
+            switch (quest.Type)
             {
-                int NpcHandle = quest.CurrQuest.NPCHandle;
+                case EQuestType.Main:
+                    {
+                        // 이전 메인퀘스트가 진행중이라면.
+                        if (mainQuest)
+                            continue;
+                        // 해당 메인퀘스트가 진행중이라면.
+                        if (quest.Accept)
+                        {
+                            mainQuest = true;
+                            continue;
+                        }
+                        // 해당 메인퀘스트가 클리어된 상태라면.
+                        if (quest.Clear)
+                            continue;
+                        NpcHandle = quest.CurrQuest.NPCHandle;
+                        if (m_npcStat[NpcHandle].QuestList == null)
+                            m_npcStat[NpcHandle].QuestList = new List<Quest>();
+                        m_npcStat[NpcHandle].QuestList.Add(quest);
+                    } break;
+                case EQuestType.Normal:
+                    if (!quest.Clear && !quest.Accept)
+                    {
+                        if (m_npcStat[NpcHandle].QuestList == null)
+                            m_npcStat[NpcHandle].QuestList = new List<Quest>();
 
-                if (m_npcStat[NpcHandle].QuestList == null)
-                    m_npcStat[NpcHandle].QuestList = new List<Quest>();
+                        m_npcStat[NpcHandle].QuestList.Add(quest);
+                    }  break;
+                case EQuestType.Repeat:
+                    if(!quest.Accept)
+                    {
+                        if (m_npcStat[NpcHandle].QuestList == null)
+                            m_npcStat[NpcHandle].QuestList = new List<Quest>();
 
-                m_npcStat[NpcHandle].QuestList.Add(quest);
+                        m_npcStat[NpcHandle].QuestList.Add(quest);
+                    } break;
             }
         }
     }
