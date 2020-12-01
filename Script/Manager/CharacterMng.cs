@@ -789,10 +789,6 @@ public class CharacterMng : TSingleton<CharacterMng>
         int NpcHandle = 0;
         foreach (Quest quest in m_questDic.Values)
         {
-            // 퀘스트를 받은상태라면 넘어감.
-            if (quest.Accept)
-                continue;
-
             switch (quest.Type)
             {
                 case EQuestType.Main:
