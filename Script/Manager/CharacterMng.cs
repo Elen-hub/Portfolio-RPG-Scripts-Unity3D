@@ -33,7 +33,7 @@ public class CharacterMng : TSingleton<CharacterMng>
     Dictionary<int, NormalAttack> m_characterAttackStat = new Dictionary<int, NormalAttack>();
     Dictionary<int, Stat> m_monsterStat = new Dictionary<int, Stat>();
     Dictionary<int, NormalAttack> m_monsterAttackStat = new Dictionary<int, NormalAttack>();
-    Dictionary<int, List<BaseEnermy>> m_enermyMemoryDic = new Dictionary<int, List<BaseEnermy>>();
+    Dictionary<int, Queue<BaseEnermy>> m_enermyMemoryDic = new Dictionary<int, Queue<BaseEnermy>>();
     Dictionary<int, NPCStat> m_npcStat = new Dictionary<int, NPCStat>();
 
     public Dictionary<int, BaseCharacter> CurrCharacters = new Dictionary<int, BaseCharacter>();
@@ -53,9 +53,7 @@ public class CharacterMng : TSingleton<CharacterMng>
                 character.gameObject.SetActive(false);
                 character.State = BaseCharacter.CharacterState.Idle;
                 character.StatSystem.CurrHP = character.StatSystem.GetHP;
-                if (!m_enermyMemoryDic.ContainsKey(character.StatSystem.BaseStat.Handle))
-                    m_enermyMemoryDic.Add(character.StatSystem.BaseStat.Handle, new List<BaseEnermy>());
-                m_enermyMemoryDic[character.StatSystem.BaseStat.Handle].Add(character as BaseEnermy);
+                m_enermyMemoryDic[character.StatSystem.BaseStat.Handle].Enqueue(character as BaseEnermy);
             }
         }
         CurrCharacters.Clear();
@@ -272,18 +270,17 @@ public class CharacterMng : TSingleton<CharacterMng>
         BaseEnermy Character;
         if (m_enermyMemoryDic[handle].Count != 0)
         {
-            Character = m_enermyMemoryDic[handle][0];
-            m_enermyMemoryDic[handle].Remove(Character);
+            Character = m_enermyMemoryDic[handle].Dequeue();
             Character.Respawn(uniqueID, allyType, position);
         }
         else
         {
 #if UNITY_EDITOR
-            GameObject obj = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/AssetBundle_Character/Monster/" + m_monsterStat[handle].Path + ".prefab");
+            GameObject load = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/AssetBundle_Character/Monster/" + m_monsterStat[handle].Path + ".prefab");
 #else
             GameObject obj = AssetMng.Instance["character"].LoadAsset<GameObject>(m_monsterStat[handle].Path);
 #endif
-            obj = Instantiate(obj, position, Quaternion.identity);
+            GameObject obj = Instantiate(load, position, Quaternion.identity);
             Character = obj.GetComponent<BaseEnermy>();
             Character.transform.eulerAngles = new Vector3(0, angle, 0);
             Character.Init(uniqueID, allyType, m_monsterAttackStat[handle], m_monsterStat[handle]);
@@ -299,7 +296,7 @@ public class CharacterMng : TSingleton<CharacterMng>
     }
     public void RemoveMonster(int uniqueID)
     {
-        m_enermyMemoryDic[CurrCharacters[uniqueID].StatSystem.BaseStat.Handle].Add(CurrCharacters[uniqueID] as BaseEnermy);
+        m_enermyMemoryDic[CurrCharacters[uniqueID].StatSystem.BaseStat.Handle].Enqueue(CurrCharacters[uniqueID] as BaseEnermy);
         CurrCharacters.Remove(uniqueID);
     }
     public List<SMonsterReword> GetMonsterReword(int enermyHandle)
@@ -564,7 +561,7 @@ public class CharacterMng : TSingleton<CharacterMng>
                         stat.Pattern.Add(new EnermyPattern(type, order, Values[2], float.Parse(Values[5])));
                 }
             }
-            m_enermyMemoryDic.Add(stat.Handle, new List<BaseEnermy>());
+            m_enermyMemoryDic.Add(stat.Handle, new Queue<BaseEnermy>());
             m_monsterStat.Add(stat.Handle, stat);
         }
 

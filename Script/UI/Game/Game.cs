@@ -66,6 +66,14 @@ public class Game : BaseUI
 
         gameObject.SetActive(false);
     }
+    private void OnGUI()
+    {
+        if (GUI.Button(new Rect(0, 0, 200, 200), "Collect"))
+        {
+            System.GC.Collect();
+        }
+
+    }
     void LateUpdate()
     {
 #if !UNITY_EDITOR

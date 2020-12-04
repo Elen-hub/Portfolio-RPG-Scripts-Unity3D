@@ -44,10 +44,22 @@ public class SkillInfo
 }
 public class BaseSkill : MonoBehaviour, IQuickSlotable
 {
+    #region Default Var
     public SkillInfo SkillInfo;
+
+    // Action target, Animation Time
+    public BaseCharacter Caster;
+    public float DurationTime = 0;
+    public float CompleteTime = 0;
+
     public float ElapsedTime { get; set; }
     public float CoolTime { get; set; }
     public string Icon { get; set; }
+    public bool PossibleSkill;
+    public float GetCoolTimePercentage { get { return 1 - ElapsedTime / SkillInfo.CoolTime; } }
+    #endregion
+
+    #region Flag Var
     public bool IsChanneling;
     float m_channelingElapsedTime;
 
@@ -57,19 +69,12 @@ public class BaseSkill : MonoBehaviour, IQuickSlotable
     public bool IsLink;
     public BaseSkill LinkSkill;
     float m_linkElapsedTime;
-
-    public BaseCharacter Caster;
-
-    public float DurationTime = 0;
-    public float CompleteTime = 0;
-
-    public bool PossibleSkill;
-    public float GetCoolTimePercentage { get { return 1 - ElapsedTime / SkillInfo.CoolTime; } }
+    #endregion
 
     public virtual BaseSkill Init(BaseEnermy caster)
     {
         return this;
-    }
+    } // 몬스터 스킬 초기화
     public virtual BaseSkill Init(BaseCharacter caster, SkillInfo info)
     {
         SkillInfo = info;
@@ -86,7 +91,52 @@ public class BaseSkill : MonoBehaviour, IQuickSlotable
         }
 
         return this;
-    }
+    } // 플레이어블 스킬 초기화
+    public virtual bool Using()
+    {
+        if (Caster.IsStun || Caster.IsHit || Caster.IsNuckback)
+            return false;
+
+        if (Caster.AttackSystem.HoldAttack)
+            return false;
+
+        if (!PossibleSkill)
+        {
+            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "아직 사용 할 수 없습니다.");
+            return false;
+        }
+        if (Caster.StatSystem.CurrMP < SkillInfo.MP)
+        {
+            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "마나가 부족합니다.");
+            return false;
+        }
+        return RangeCheck();
+    } // 이 스킬이 사용 가능한지 쿨타임, 마나, 캐릭터 상태 체크.
+    public virtual void Use()
+    {
+        PossibleSkill = false;
+        ElapsedTime = 0;
+        Caster.StatSystem.CurrMP -= SkillInfo.MP;
+
+        if ((SkillInfo.Type & ESkillType.Keydown) != 0)
+        {
+            m_keydownElapsedTime = 0;
+            IsKeyDown = true;
+        }
+        if ((SkillInfo.Type & ESkillType.Link) != 0)
+        {
+            m_linkElapsedTime = 0;
+            IsLink = true;
+        }
+        if ((SkillInfo.Type & ESkillType.Channeling) != 0)
+        {
+            m_channelingElapsedTime = 0;
+            IsChanneling = true;
+        }
+
+        Caster.MoveSystem.Stop = true;
+        Caster.State = BaseCharacter.CharacterState.Idle;
+    } // 스킬을 사용함에 있어서 공통적인 소모값, 상태변경. 가시적인 효과는 오버라이딩하여 구현
     public virtual bool RangeCheck()
     {
         if (SkillInfo.IsAutoAim)
@@ -123,27 +173,7 @@ public class BaseSkill : MonoBehaviour, IQuickSlotable
             }
         }
         return true;
-    }
-    public virtual bool Using()
-    {
-        if (Caster.IsStun || Caster.IsHit || Caster.IsNuckback)
-            return false;
-
-        if (Caster.AttackSystem.HoldAttack)
-            return false;
-
-        if (!PossibleSkill)
-        {
-            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "아직 사용 할 수 없습니다.");
-            return false;
-        }
-        if (Caster.StatSystem.CurrMP < SkillInfo.MP)
-        {
-            SystemMessage.Instance.PushMessage(SystemMessage.MessageType.Sub, "마나가 부족합니다.");
-            return false;
-        }
-        return RangeCheck();
-    }
+    } // Auto Aming 기능 사용시 거리, 타겟체크
     bool AutoAIM()
     {
         bool rangeCheck = Vector3.Distance(Caster.transform.position, Caster.Target.transform.position) < SkillInfo.Range;
@@ -169,51 +199,26 @@ public class BaseSkill : MonoBehaviour, IQuickSlotable
             });
         }
         return rangeCheck;
-    }
-    public virtual void Use()
-    {
-        PossibleSkill = false;
-        ElapsedTime = 0;
-        Caster.StatSystem.CurrMP -= SkillInfo.MP;
-
-        if((SkillInfo.Type & ESkillType.Keydown) != 0)
-        {
-            m_keydownElapsedTime = 0;
-            IsKeyDown = true;
-        }
-        if ((SkillInfo.Type & ESkillType.Link) != 0)
-        {
-            m_linkElapsedTime = 0;
-            IsLink = true;
-        }
-        if ((SkillInfo.Type & ESkillType.Channeling) != 0)
-        {
-            m_channelingElapsedTime = 0;
-            IsChanneling = true;
-        }
-
-        Caster.MoveSystem.Stop = true;
-        Caster.State = BaseCharacter.CharacterState.Idle;
-    }
+    } // 체크가 완료됬다면 실행
     protected virtual void ChannelingAction()
     {
 
-    }
+    } // 채널링 지속 효과
     public virtual void EndChanneling()
     {
         IsChanneling = false;
         m_channelingElapsedTime = 0;
-    }
+    } // 채널링효과 종료
     public virtual void EndLink()
     {
         IsLink = false;
         m_linkElapsedTime = 0;
-    }
+    } // 링크스킬 활성화 시간 만료
     public virtual void EndKeydown()
     {
         IsKeyDown = false;
         m_keydownElapsedTime = 0;
-    }
+    } // 키다운 스킬 비활성화
     protected virtual void Update()
     {
         if (IsKeyDown)
@@ -243,5 +248,5 @@ public class BaseSkill : MonoBehaviour, IQuickSlotable
 
         if (ElapsedTime> CoolTime)
             PossibleSkill = true;
-    }
+    }  // 쿨타임, 애니메이션, 특수 플래그 시간 채크
 }
