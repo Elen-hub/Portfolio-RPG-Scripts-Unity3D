@@ -44,7 +44,7 @@ public class Enermy_Cobra : Enermy_Boss_CloseAttack
             worldCamera.transform.position = Vector3.Lerp(prevPos, nextPos, a);
             worldCamera.transform.eulerAngles = Vector3.Lerp(prevAngle, nextAngle, a);
         }
-        m_initPosition = new Vector3(-1.5f, 6.5f, -11.3f);
+        InitPosition = new Vector3(-1.5f, 6.5f, -11.3f);
         State = CharacterState.Move;
 
         prevPos = worldCamera.transform.position;

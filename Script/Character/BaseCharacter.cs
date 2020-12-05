@@ -10,7 +10,6 @@ public enum EAllyType
     Hostile =4,
     Neutral = 8,
 }
-public delegate void CharacterBehaviour();
 public abstract class BaseCharacter : MonoBehaviour
 {
     [System.Flags]
@@ -25,43 +24,39 @@ public abstract class BaseCharacter : MonoBehaviour
     [Header("Info")]
     public int UniqueID;
     public EAllyType AllyType;
-    [SerializeField] protected CharacterState m_state;
 
     BaseEffect m_stunEffect;
     public BaseCharacter Target;
+
+    #region Module
     [HideInInspector] public ChatBox ChatBox;
     [HideInInspector] public Animator Animator;
-
     [HideInInspector] public AttackSystem AttackSystem;
     [HideInInspector] public StatSystem StatSystem;
     [HideInInspector] public BuffSystem BuffSystem;
     [HideInInspector] public MoveSystem MoveSystem;
     [HideInInspector] public AttachSystem AttachSystem;
     [HideInInspector] public Outline Outline;
+    #endregion
 
-    protected Dictionary<CharacterState, CharacterBehaviour> m_actionDic = new Dictionary<CharacterState, CharacterBehaviour>();
-
-    [HideInInspector] public float m_recoveryElapsedTime;
-    public virtual CharacterState State
+    #region State & FSM Function
+    [SerializeField] CharacterState m_state = CharacterState.Idle;
+    protected Dictionary<CharacterState, BaseState> m_stateDic = new Dictionary<CharacterState, BaseState>();
+    public CharacterState State
     {
         get { return m_state; }
-        set { if (m_state != CharacterState.Death) m_state = value; }
+        set {
+            if (m_state != CharacterState.Death && m_state != value)
+            {
+                m_stateDic[m_state].OnStateExit();
+                m_state = value;
+                m_stateDic[m_state].OnStateEnter();
+            }
+        }
     }
-    public virtual void SetAngle(float angle) { }
-    protected abstract void Idle();
-    protected abstract void Move();
-    protected virtual void Chase() { }
-    protected virtual void Death() { }
-    public virtual void ReceiveAttack(SReceiveHandle handle) { }
-    protected virtual void Battle() { }
-    public virtual void Revival(float hp, float mp)
-    {
-        Animator.Play("Revive");
-        StatSystem.CurrHP = hp;
-        StatSystem.CurrMP = mp;
-        m_state = CharacterState.Idle;
-        MoveSystem.Stop = false;
-    }
+    #endregion
+
+    #region CharacterStatus
     [Header("Status")]
     public bool IsHit;
     public bool IsStun;
@@ -74,6 +69,16 @@ public abstract class BaseCharacter : MonoBehaviour
     float m_nuckbackElapsedTime;
     float m_stunTime;
     float m_stunElapsedTime;
+    protected float m_recoveryElapsedTime;
+    #endregion
+
+    #region Alter Status Method
+    public virtual void Revival(float hp, float mp)
+    {
+        StatSystem.CurrHP = hp;
+        StatSystem.CurrMP = mp;
+        m_state = CharacterState.Idle;
+    }
     public void SetHit(float time)
     {
         if (AttackSystem.SuperArmor || State == CharacterState.Death)
@@ -106,11 +111,16 @@ public abstract class BaseCharacter : MonoBehaviour
             m_stunEffect.ResetTargetTime = time;
         else
             m_stunEffect = EffectMng.Instance.FindEffect("Buff/Effect_Buff_Stun", AttachSystem.GetAttachPoint(EAttachPoint.UnderHead), time);
-        
+
         m_stunElapsedTime = 0;
         m_stunTime = time;
         IsStun = true;
     }
+    #endregion
+
+    public virtual void SetAngle(float angle) { }
+    public virtual void ReceiveAttack(SReceiveHandle handle) { }
+
     protected virtual void Update()
     {
         if (State == CharacterState.Death)
@@ -176,8 +186,7 @@ public abstract class BaseCharacter : MonoBehaviour
                 IsStun = false;
             }
         }
-
-        m_actionDic[State]();
+        m_stateDic[State].OnStateStay(Time.deltaTime);
     }
     public IEnumerator RevivalAfterTime(float time)
     {

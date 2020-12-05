@@ -96,20 +96,13 @@ public class Hero_Crusader : BaseHero
                         MoveSystem.Stop = true;
                         AttackSystem.Invincibility = true;
                         MoveSystem.Stop = true;
-                        State = CharacterState.Death;
                         Animator.Play("Death");
                         NetworkMng.Instance.NotifyCharacterState_Skill(transform.eulerAngles, 56);
                         return;
                     }
                 }
             }
-            StartCoroutine(DeathAction());
+            State = CharacterState.Death;
         }
-
-        //if(transform.tag == "Player")
-        //    CameraMng.Hit(Color.red, 0.3f);
-        //else
-        //    UIMng.Instance.Open<FieldUI>(UIMng.UIName.FieldUI).SetDamageText(this, damage.ToString("F0"), Color.red, (handle.Type & EAttackType.Critical) != 0);
-
     }
 }

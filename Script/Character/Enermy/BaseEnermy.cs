@@ -14,7 +14,7 @@ public abstract class BaseEnermy : BaseCharacter
 {
     protected List<EnermyPattern> m_patternList = new List<EnermyPattern>();
     protected SphereCollider m_collider;
-    public Vector3 m_initPosition;
+    public Vector3 InitPosition;
     public float RespawnTime;
     protected EnermyPattern m_nextPattern;
     public virtual void Respawn(int uniqueID, EAllyType allyType, Vector3 pos)
@@ -22,9 +22,9 @@ public abstract class BaseEnermy : BaseCharacter
         RESET();
         UniqueID = uniqueID;
         transform.position = pos;
-        m_initPosition = pos;
+        InitPosition = pos;
         StatSystem.CurrHP = StatSystem.GetHP;
-        m_state = CharacterState.Idle;
+        State = CharacterState.Idle;
         gameObject.SetActive(true);
         MoveSystem.Stop = false;
         m_collider.enabled = true;
@@ -35,7 +35,7 @@ public abstract class BaseEnermy : BaseCharacter
         AllyType = allyType;
         m_collider = transform.Find("AgroCollision").GetComponent<SphereCollider>();
         m_collider.radius = GameSystem.NormalMonsterColliderRange;
-        m_initPosition = transform.position;
+        InitPosition = transform.position;
         Animator = GetComponent<Animator>();
 
         BuffSystem = gameObject.AddComponent<BuffSystem>();
@@ -52,12 +52,11 @@ public abstract class BaseEnermy : BaseCharacter
         Outline.OutlineWidth = 0;
         Outline.OutlineMode = Outline.Mode.OutlineVisible;
 
-        m_actionDic.Add(CharacterState.Idle, Idle);
-        m_actionDic.Add(CharacterState.Move, Move);
-        m_actionDic.Add(CharacterState.Chase, Chase);
-        m_actionDic.Add(CharacterState.Battle, Battle);
-        m_actionDic.Add(CharacterState.Death, Death);
-        State = CharacterState.Idle;
+        m_stateDic.Add(CharacterState.Idle, new State_Idle_EnermyDefault(this));
+        m_stateDic.Add(CharacterState.Move, new State_Move_EnermyDefault(this, m_collider));
+        m_stateDic.Add(CharacterState.Chase, new State_Chase_EnermyDefault(this));
+        m_stateDic.Add(CharacterState.Battle, new State_Battle_EnermyDefault(this));
+        m_stateDic.Add(CharacterState.Death, new State_Death_EnermyDefault(this));
 
         List<EnermyPattern> patterns = stat.Pattern;
         for (int i = 0; i < patterns.Count; ++i)
@@ -66,110 +65,6 @@ public abstract class BaseEnermy : BaseCharacter
             pattern.Init(this);
             m_patternList.Add(pattern);
         }
-    }
-    protected override void Idle()
-    {
-        Animator.SetInteger("State", 0);
-        if (Target != null)
-            State = CharacterState.Chase;
-    }
-    protected override void Move()
-    {
-        if (IsHit || IsNuckback || IsStun || !AttackSystem.CompleteAttack)
-            return;
-
-        Animator.SetInteger("State", 1);
-        StatSystem.RecoveryHP(StatSystem.GetHP * Time.deltaTime * 0.2f);
-        MoveSystem.MoveSpeed = StatSystem.GetMoveSpeed * (1 + StatSystem.GetMoveSpeedPro);
-        if (MoveSystem.MoveToPosition(m_initPosition, 0))
-        {
-            RESET();
-            StatSystem.RecoveryHP(StatSystem.GetHP);
-            m_collider.enabled = true;
-        }
-    }
-    protected override void Chase()
-    {
-        if (IsHit || IsNuckback || IsStun || !AttackSystem.CompleteAttack)
-            return;
-
-        if (Target == null)
-        {
-            State = CharacterState.Move;
-            return;
-        }
-
-        // 후퇴거리 체크
-        float distance = Vector3.Distance(transform.position, Target.transform.position);
-        if (distance > GameSystem.NormalMonsterChaseRangeToTarget || Vector3.Distance(transform.position, m_initPosition) > GameSystem.NormalMonsterChaseRangeToSpawn || Target.State == CharacterState.Death)
-        {
-            Target = null;
-            return;
-        }
-
-        // 패턴사용 체크
-        bool pattern = false;
-        for (int i = 0; i < m_patternList.Count; ++i)
-        {
-            if (m_patternList[i].IsUse())
-            {
-                pattern = true;
-                if (m_patternList[i].RangeCheck())
-                {
-                    State = CharacterState.Battle;
-                    return;
-                }
-            }
-        }
-        // 일반공격 체크
-        if (!pattern)
-        {
-            if (distance < AttackSystem.NormalAttack.Range[AttackSystem.AttackCount] * 0.7f)
-            {
-                State = CharacterState.Battle;
-                return;
-            }
-        }
-
-        Animator.SetInteger("State", 1);
-        MoveSystem.MoveSpeed = StatSystem.GetMoveSpeed * (1 + StatSystem.GetMoveSpeedPro);
-        MoveSystem.NextFrameChase();
-    }
-    protected override void Battle()
-    {
-        MoveSystem.Stop = true;
-
-        if (IsHit || IsNuckback || IsStun || !AttackSystem.CompleteAttack)
-            return;
-
-        if (Target == null || Target.State == CharacterState.Death)
-        {
-            Target = null;
-            State = CharacterState.Move;
-            return;
-        }
-        for(int i =0; i<m_patternList.Count; ++i)
-        {
-            if (m_patternList[i].IsUse())
-            {
-                if (m_patternList[i].RangeCheck())
-                {
-                    Animator.SetInteger("State", 0);
-                    m_patternList[i].Use();
-                    return;
-                }
-            }
-        }
-        float distance = Vector3.Distance(transform.position, Target.transform.position);
-        if (distance > AttackSystem.NormalAttack.Range[AttackSystem.AttackCount] * 0.7f)
-        {
-            MoveSystem.SetMoveToTarget(Target.transform, AttackSystem.NormalAttack.Range[AttackSystem.AttackCount] * 0.7f);
-            return;
-        }
-        Animator.SetInteger("State", 0);
-        Animator.Play("Attack");
-        transform.LookAt(Target.transform);
-        AttackSystem.UseAttack(UniqueID, StatSystem.GetAttackDamage);
     }
     public override void ReceiveAttack(SReceiveHandle handle)
     {
@@ -202,7 +97,6 @@ public abstract class BaseEnermy : BaseCharacter
                 NetworkMng.Instance.RequestEnermyKill(UniqueID);
 
             State = CharacterState.Death;
-            StartCoroutine(DeathAction());
             return;
         }
         StatSystem.CurrHP -= damage;
@@ -214,6 +108,37 @@ public abstract class BaseEnermy : BaseCharacter
             Animator.SetFloat("HitTime", hitTime);
             Animator.SetTrigger("Hit");
         }
+    }
+    public bool CheckBattlePattern()
+    {
+        for (int i = 0; i < m_patternList.Count; ++i)
+        {
+            if (m_patternList[i].IsUse())
+            {
+                if (m_patternList[i].RangeCheck())
+                {
+                    State = CharacterState.Battle;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool UseBattlePattern()
+    {
+        for (int i = 0; i < m_patternList.Count; ++i)
+        {
+            if (m_patternList[i].IsUse())
+            {
+                if (m_patternList[i].RangeCheck())
+                {
+                    Animator.SetInteger("State", 0);
+                    m_patternList[i].Use();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     protected virtual void OnTriggerEnter(Collider other)
     {
@@ -231,23 +156,11 @@ public abstract class BaseEnermy : BaseCharacter
             State = CharacterState.Chase;
         }
     }
-    protected virtual void RESET()
+    public virtual void RESET()
     {
         for(int i =0; i<m_patternList.Count; ++i)
             m_patternList[i].Reset();
 
         BuffSystem.Disabled();
-    }
-    protected IEnumerator DeathAction()
-    {
-        yield return null;
-        BuffSystem.Disabled();
-        Target = null;
-        MoveSystem.Stop = true;
-        Animator.Play("Death");
-        StatSystem.CurrHP = 0;
-
-        yield return new WaitForSeconds(3);
-        gameObject.SetActive(false);
     }
 }

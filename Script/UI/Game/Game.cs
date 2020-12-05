@@ -66,17 +66,61 @@ public class Game : BaseUI
 
         gameObject.SetActive(false);
     }
-    private void OnGUI()
-    {
-        if (GUI.Button(new Rect(0, 0, 200, 200), "Collect"))
-        {
-            System.GC.Collect();
-        }
-
-    }
     void LateUpdate()
     {
-#if !UNITY_EDITOR
+#if UNITY_EDITOR
+        // 카메라 회전 시작
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!GameSystem.PlayerCameraHoldRot)
+            {
+                if (EventSystem.current.IsPointerOverGameObject())
+                    return;
+
+                m_useDragCameraRot = true;
+                m_inputScreenPoint = Input.mousePosition.x;
+
+                RaycastHit hit;
+                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 30, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
+                {
+                    switch (hit.transform.tag)
+                    {
+                        case "NPC":
+                            BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
+                            hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
+                                UIMng.Instance.CLOSE = UIMng.UIName.Game;
+                                UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
+                            });
+                            break;
+                        case "Enermy":
+                            InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
+                            break;
+                        default:
+                            BaseHero character = hit.transform.GetComponent<BaseHero>();
+                            InfoWindow.Enabled(character, character.Name, true);
+                            break;
+                    }
+                }
+            }
+        }
+        // 카메라 회전 중 이라면
+        if (m_useDragCameraRot)
+        {
+            if (!GameSystem.PlayerCameraHoldRot)
+            {
+                m_deltaScroll.y = Mathf.Clamp(m_inputScreenPoint - Input.mousePosition.x, -150, 150);
+                // m_deltaScroll.y = m_inputScreenPoint - Input.mousePosition.x;
+                m_inputScreenPoint = Input.mousePosition.x;
+                CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).transform.eulerAngles += m_deltaScroll * Time.deltaTime * 5;
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            // 카메라 회전 종료
+            m_useDragCameraRot = false;
+            m_deltaScroll = Vector3.zero;
+        }
+#else
         if (0 >= Input.touchCount)
         {
             m_touchHandle = -1;
@@ -133,65 +177,11 @@ public class Game : BaseUI
                 }
             }
             if (Input.GetTouch(t).phase == TouchPhase.Ended)
-            {    
+            {
                 m_useDragCameraRot = false;
                 m_deltaScroll = Vector3.zero;
-                m_touchHandle = -1;            
+                m_touchHandle = -1;
             }
-        }
-       
-#else
-        // 카메라 회전 시작
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (!GameSystem.PlayerCameraHoldRot)
-            {
-                if (EventSystem.current.IsPointerOverGameObject())
-                    return;
-
-                m_useDragCameraRot = true;
-                m_inputScreenPoint = Input.mousePosition.x;
-
-                RaycastHit hit;
-                if (Physics.Raycast(CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.ScreenPointToRay(Input.mousePosition), out hit, 30, 1 << LayerMask.NameToLayer("NPC") | 1 << LayerMask.NameToLayer("Ally") | 1 << LayerMask.NameToLayer("Hero") | 1 << LayerMask.NameToLayer("Enermy"), QueryTriggerInteraction.Collide))
-                {
-                    switch (hit.transform.tag)
-                    {
-                        case "NPC":
-                            BaseCharacter hero = PlayerMng.Instance.MainPlayer.Character;
-                            hero.MoveSystem.SetMoveToTarget(hit.transform, 1, () => {
-                                UIMng.Instance.CLOSE = UIMng.UIName.Game;
-                                UIMng.Instance.Open<NPCUI>(UIMng.UIName.NPCUI).Enabled(hit.transform.GetComponent<BaseNPC>());
-                            });
-                            break;
-                        case "Enermy":
-                            InfoWindow.Enabled(hit.transform.GetComponent<BaseCharacter>(), true);
-                            break;
-                        default:
-                            BaseHero character = hit.transform.GetComponent<BaseHero>();
-                            InfoWindow.Enabled(character, character.Name, true);
-                            break;
-                    }
-                }
-            }
-        }
-        // 카메라 회전 중 이라면
-        if (m_useDragCameraRot)
-        {
-            if (!GameSystem.PlayerCameraHoldRot)
-            {
-                m_deltaScroll.y = Mathf.Clamp(m_inputScreenPoint - Input.mousePosition.x, -150, 150);
-                // m_deltaScroll.y = m_inputScreenPoint - Input.mousePosition.x;
-                m_inputScreenPoint = Input.mousePosition.x;
-                CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).transform.eulerAngles += m_deltaScroll * Time.deltaTime * 5;
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            // 카메라 회전 종료
-            m_useDragCameraRot = false;
-            m_deltaScroll = Vector3.zero;
         }
 #endif
     }

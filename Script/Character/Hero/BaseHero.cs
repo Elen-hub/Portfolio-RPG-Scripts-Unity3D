@@ -5,7 +5,6 @@ using UnityEngine.Events;
 
 public class BaseHero : BaseCharacter
 {
-    Collider m_collier;
     public string Name;
     public virtual void Init(int uniqueID, EAllyType allyType, NormalAttack attack, Stat stat, Dictionary<EItemType, Item_Equipment> equipment)
     {
@@ -25,14 +24,12 @@ public class BaseHero : BaseCharacter
         Outline = gameObject.AddComponent<Outline>();
         Outline.OutlineWidth = 0;
         Outline.OutlineMode = Outline.Mode.OutlineVisible;
-        m_collier = GetComponent<Collider>();
 
-        m_actionDic.Add(CharacterState.Idle, Idle);
-        m_actionDic.Add(CharacterState.Move, Move);
-        m_actionDic.Add(CharacterState.Chase, Chase);
-        m_actionDic.Add(CharacterState.Battle, Battle);
-        m_actionDic.Add(CharacterState.Death, Death);
-        State = CharacterState.Idle;
+        m_stateDic.Add(CharacterState.Idle, new State_Idle_Hero(this));
+        m_stateDic.Add(CharacterState.Move, new State_Move_Hero(this));
+        m_stateDic.Add(CharacterState.Chase, new State_Chase_Hero(this));
+        m_stateDic.Add(CharacterState.Battle, new State_Battle_Hero(this));
+        m_stateDic.Add(CharacterState.Death, new State_Death_Hero(this));
     }
     public override void SetAngle(float angle)
     {
@@ -58,7 +55,7 @@ public class BaseHero : BaseCharacter
 
         if (StatSystem.CurrHP < damage)
         {
-            StartCoroutine(DeathAction());
+            State = CharacterState.Death;
             return;
         }
 
@@ -81,65 +78,6 @@ public class BaseHero : BaseCharacter
             Animator.SetTrigger("Hit");
         }
     }
-    protected override void Idle()
-    {
-        Animator.SetInteger("State", 0);
-    }
-    protected override void Move()
-    {
-        if (IsStun || IsHit || IsNuckback || !AttackSystem.CompleteAttack)
-        {
-            State = CharacterState.Idle;
-            return;
-        }
-
-        MoveSystem.Stop = true;
-        Animator.SetInteger("State", 1);
-        if (transform.tag == "Player")
-        {
-            MoveSystem.MoveSpeed = StatSystem.GetMoveSpeed * (1 + StatSystem.GetMoveSpeedPro);
-            MoveSystem.RotateAxis();
-            MoveSystem.MoveAxis();
-            NetworkMng.Instance.NotifyCharacterState_Move(transform.position, transform.eulerAngles);
-        }
-    }
-    protected override void Chase()
-    {
-        if (IsStun || IsHit || IsNuckback)
-        {
-            State = CharacterState.Idle;
-            return;
-        }
-
-        Animator.SetInteger("State", 1);
-        MoveSystem.MoveSpeed = StatSystem.GetMoveSpeed * (1 + StatSystem.GetMoveSpeedPro);
-        if (transform.tag == "Player")
-        {
-            MoveSystem.NextFrameChase();
-            NetworkMng.Instance.NotifyCharacterState_Chase(MoveSystem.Target.position, MoveSystem.ChaseDistance);
-        }
-        else
-            MoveSystem.MoveToPosition();
-    }
-    protected override void Battle()
-    {
-        //if (transform.tag == "Player")
-        //    Debug.Log("");
-
-        MoveSystem.Stop = true;
-
-        if(AttackSystem.CompleteAttack)
-        {
-            State = CharacterState.Idle;
-            return;
-        }
-
-        Animator.SetInteger("State", 3);
-    }
-    protected override void Death()
-    {
-
-    }
     protected override void Update()
     {
         if (State != CharacterState.Death)
@@ -150,9 +88,8 @@ public class BaseHero : BaseCharacter
                 StatSystem.RecoveryNature();
                 m_recoveryElapsedTime = 0;
             }
-
-            // if(!AttackSystem.Hit)
-                base.Update();
+            
+            base.Update();
         }
     }
     public virtual void AttackEffect(int count)
@@ -190,26 +127,5 @@ public class BaseHero : BaseCharacter
     void Hit()
     {
 
-    }
-    public override void Revival(float hp, float mp)
-    {
-        base.Revival(hp, mp);
-        m_collier.enabled = true;
-    }
-    protected IEnumerator DeathAction()
-    {
-        yield return null;
-        BuffSystem.Disabled();
-        m_collier.enabled = false;
-        MoveSystem.Stop = true;
-        StatSystem.CurrHP = 0;
-        State = CharacterState.Death;
-        Animator.Play("Death");
-        if (tag == "Player")
-        {
-            CameraMng.Infrared_ON(3);
-            yield return new WaitForSeconds(2f);
-            UIMng.Instance.Open<SelectPopup>(UIMng.UIName.SelectPopup).RevivePopup.Enabled();
-        }
     }
 }

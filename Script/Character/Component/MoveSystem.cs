@@ -114,7 +114,6 @@ public class MoveSystem : MonoBehaviour
                 {
                     m_navMesh.isStopped = true;
                     m_navMesh.velocity = Vector3.zero;
-                    m_character.State = BaseCharacter.CharacterState.Idle;
                     return true;
                 }
             }
