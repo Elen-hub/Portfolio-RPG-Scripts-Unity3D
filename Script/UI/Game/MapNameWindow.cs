@@ -31,7 +31,6 @@ public class MapNameWindow : MonoBehaviour
         {
             m_prevColor.a = Mathf.Lerp(0, 1, i / 74f);
             m_text.color = m_prevColor;
-            // m_text.color = Color.Lerp(Color.clear, Color.white, i / 74f);
             yield return wait;
         }
         yield return new WaitForSeconds(1.5f);
@@ -39,7 +38,6 @@ public class MapNameWindow : MonoBehaviour
         {
             m_prevColor.a = Mathf.Lerp(1, 0, i / 49f);
             m_text.color = m_prevColor;
-            // m_text.color = Color.Lerp(Color.white, Color.clear, i / 49f);
             yield return wait;
         }
         gameObject.SetActive(false);

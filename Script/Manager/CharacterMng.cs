@@ -276,11 +276,11 @@ public class CharacterMng : TSingleton<CharacterMng>
         else
         {
 #if UNITY_EDITOR
-            GameObject load = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/AssetBundle_Character/Monster/" + m_monsterStat[handle].Path + ".prefab");
+            GameObject obj = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/AssetBundle_Character/Monster/" + m_monsterStat[handle].Path + ".prefab");
 #else
-            GameObject obj = AssetMng.Instance["character"].LoadAsset<GameObject>(m_monsterStat[handle].Path);
+             GameObject obj = AssetMng.Instance["character"].LoadAsset<GameObject>(m_monsterStat[handle].Path);
 #endif
-            GameObject obj = Instantiate(load, position, Quaternion.identity);
+            obj = Instantiate(obj, position, Quaternion.identity);
             Character = obj.GetComponent<BaseEnermy>();
             Character.transform.eulerAngles = new Vector3(0, angle, 0);
             Character.Init(uniqueID, allyType, m_monsterAttackStat[handle], m_monsterStat[handle]);

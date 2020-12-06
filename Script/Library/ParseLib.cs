@@ -55,9 +55,7 @@ public class ParseLib : MonoBehaviour
             }
         }
         if (player.Character == null)
-        {
             player.Character = CharacterMng.Instance.InstantiateHero(player.Handle, uniqueID, type, pos, EquipList, player.Name);
-        }
 
         player.Character.StatSystem.Level = player.Level;
         player.Character.StatSystem.STR = STR;

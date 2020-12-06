@@ -71,14 +71,13 @@ public class SceneMng : TSingleton<SceneMng>
 
         IsSceneLoad = true;
 
-        CameraMng.Fade_OFF(1);
-        yield return new WaitForSeconds(1);
-        UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).MapNameWindow.Enabled();
-        yield return null;
 #else
         CameraMng.Fade_ON(1);
+        Debug.Log("2");
         yield return new WaitForSeconds(1);
+                Debug.Log("3");
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetMap();
+                Debug.Log("4");
         LoadingScene loadingUI = UIMng.Instance.Open<LoadingScene>(UIMng.UIName.LoadingScene);
         EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
         if (CurrLoadArea != prevArea)
@@ -88,7 +87,6 @@ public class SceneMng : TSingleton<SceneMng>
 
             yield return AssetMng.Instance.LoadAsset(loadingUI, "scene_" + prevArea);
         }
-
         loadingUI.SetText = "맵을 불러오는 중입니다.";
         AsyncOperation async = SceneManager.LoadSceneAsync(name);
         async.allowSceneActivation = false;
@@ -109,7 +107,6 @@ public class SceneMng : TSingleton<SceneMng>
                     async.allowSceneActivation = true;
             }
         }
-
         if (CurrLoadArea != prevArea)
         {
             AssetMng.Instance.UnLoadAsset("scene_" + CurrLoadArea);
@@ -118,15 +115,22 @@ public class SceneMng : TSingleton<SceneMng>
 
         if (after != null)
             after?.Invoke();
-
         IsSceneLoad = true;
         UIMng.Instance.CLOSE = UIMng.UIName.LoadingScene;
-
+#endif
+        WorldCamera worldCam = CameraMng.Instance.GetCamera<WorldCamera>(CameraMng.CameraStyle.World);
+        WorldCamera.ReturnMethod method = worldCam.StartAction("JoinAction_" + MapMng.Instance.CurrMap.SceneName);
+        if (method != null)
+        {
+            UIMng.Instance.CLOSE = UIMng.UIName.Game;
+            worldCam.Enabled = true;
+            yield return StartCoroutine(method());
+            worldCam.Enabled = false;
+            UIMng.Instance.OPEN = UIMng.UIName.Game;
+        }
         CameraMng.Fade_OFF(1);
         yield return new WaitForSeconds(1);
         UIMng.Instance.GetUI<Game>(UIMng.UIName.Game).MapNameWindow.Enabled();
-        yield return null;
-#endif
     }
     public override void Init()
     {

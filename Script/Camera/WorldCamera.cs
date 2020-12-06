@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(CameraAction))]
 public class WorldCamera : BaseCamera
 {
-    delegate IEnumerator ReturnMethod();
+    public delegate IEnumerator ReturnMethod();
 
     CameraAction m_cameraAction;
     
@@ -15,8 +15,18 @@ public class WorldCamera : BaseCamera
         
         m_cameraAction = GetComponent<CameraAction>();
     }
-    public Coroutine StartAction(string methodName)
+    public ReturnMethod StartAction(string methodName)
     {
-        return StartCoroutine((System.Delegate.CreateDelegate(typeof(ReturnMethod), m_cameraAction, methodName) as ReturnMethod)());
+        try
+        {
+            System.Delegate del = System.Delegate.CreateDelegate(typeof(ReturnMethod), m_cameraAction, methodName);
+            if (del != null) 
+                return del as ReturnMethod;
+        }
+        catch
+        {
+            return null;
+        }
+        return null;
     }
 }
