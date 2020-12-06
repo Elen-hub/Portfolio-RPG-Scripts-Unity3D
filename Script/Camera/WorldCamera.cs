@@ -15,7 +15,7 @@ public class WorldCamera : BaseCamera
         
         m_cameraAction = GetComponent<CameraAction>();
     }
-    public ReturnMethod StartAction(string methodName)
+    public ReturnMethod FindAction(string methodName)
     {
         try
         {

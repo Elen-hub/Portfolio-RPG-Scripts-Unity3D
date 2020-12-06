@@ -24,7 +24,8 @@ public abstract class BaseEnermy : BaseCharacter
         transform.position = pos;
         InitPosition = pos;
         StatSystem.CurrHP = StatSystem.GetHP;
-        State = CharacterState.Idle;
+        m_stateDic[m_state].OnStateExit();
+        m_state = CharacterState.Idle;
         gameObject.SetActive(true);
         MoveSystem.Stop = false;
         m_collider.enabled = true;

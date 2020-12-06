@@ -278,7 +278,7 @@ public class CharacterMng : TSingleton<CharacterMng>
 #if UNITY_EDITOR
             GameObject obj = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/AssetBundle_Character/Monster/" + m_monsterStat[handle].Path + ".prefab");
 #else
-             GameObject obj = AssetMng.Instance["character"].LoadAsset<GameObject>(m_monsterStat[handle].Path);
+            GameObject obj = AssetMng.Instance["character"].LoadAsset<GameObject>(m_monsterStat[handle].Path);
 #endif
             obj = Instantiate(obj, position, Quaternion.identity);
             Character = obj.GetComponent<BaseEnermy>();

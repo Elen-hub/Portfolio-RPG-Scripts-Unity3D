@@ -31,7 +31,7 @@ public class State_Death_EnermyDefault : BaseState
     }
     public override void OnStateExit()
     {
-        m_moveSystem.Stop = false;
+
     }
     protected IEnumerator DeathAction()
     {

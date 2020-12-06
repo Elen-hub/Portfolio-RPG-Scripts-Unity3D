@@ -119,7 +119,7 @@ public class SceneMng : TSingleton<SceneMng>
         UIMng.Instance.CLOSE = UIMng.UIName.LoadingScene;
 #endif
         WorldCamera worldCam = CameraMng.Instance.GetCamera<WorldCamera>(CameraMng.CameraStyle.World);
-        WorldCamera.ReturnMethod method = worldCam.StartAction("JoinAction_" + MapMng.Instance.CurrMap.SceneName);
+        WorldCamera.ReturnMethod method = worldCam.FindAction("JoinAction_" + MapMng.Instance.CurrMap.SceneName);
         if (method != null)
         {
             UIMng.Instance.CLOSE = UIMng.UIName.Game;

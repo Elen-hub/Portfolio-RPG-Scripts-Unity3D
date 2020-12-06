@@ -50,8 +50,8 @@ public class BuffSystem : MonoBehaviour
     }
     public void Disabled()
     {
-        for(int i =0; i<m_buffList.Count; ++i)
-            m_buffList[i].Disabled();
+        foreach (Buff buff in m_buffList)
+            buff.Disabled();
     }
     public Buff FindBuffType(EBuffType type)
     {

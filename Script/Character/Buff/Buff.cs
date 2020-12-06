@@ -112,8 +112,11 @@ public class Buff
             m_effect.Disabled();
             m_effect = null;
         }
-        m_buff(false);
-        m_buff = null;
+        if (m_buff != null)
+        {
+            m_buff(false);
+            m_buff = null;
+        }
     }
     public virtual void MoveFrame()
     {

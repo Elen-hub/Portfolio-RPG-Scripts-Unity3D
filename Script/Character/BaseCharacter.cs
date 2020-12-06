@@ -40,7 +40,7 @@ public abstract class BaseCharacter : MonoBehaviour
     #endregion
 
     #region State & FSM Function
-    CharacterState m_state = CharacterState.Idle;
+    protected CharacterState m_state = CharacterState.Idle;
     protected Dictionary<CharacterState, BaseState> m_stateDic = new Dictionary<CharacterState, BaseState>();
     public CharacterState State
     {
