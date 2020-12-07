@@ -15,6 +15,13 @@ public class CharacterWindow : MonoBehaviour
     Text m_mpText;
     Text m_level;
     Text m_exp;
+    float m_deltaHp, m_deltaMp;
+    public string SetLevelText {
+        set { m_level.text = value; }
+    }
+    public string SetEXPText {
+        set { m_exp.text = value; }
+    }
     public void Init()
     {
         m_hpBar = transform.Find("HP").GetComponent<EnergyBarBase>();
@@ -29,6 +36,7 @@ public class CharacterWindow : MonoBehaviour
         m_level = transform.Find("Level").GetComponent<Text>();
         m_buffGrid = transform.Find("BuffGrid");
         m_character = PlayerMng.Instance.MainPlayer.Character;
+        PlayerMng.Instance.SetCharacterWindow = this;
     }
     // 버프를 등록
     public void EnabledBuff(Buff buff)
@@ -47,6 +55,9 @@ public class CharacterWindow : MonoBehaviour
     }
     public void Enabled()
     {
+        if(!m_character)
+            m_character = PlayerMng.Instance.MainPlayer.Character;
+
         gameObject.SetActive(true);
     }
     public void Disabled()
@@ -55,23 +66,22 @@ public class CharacterWindow : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if(!m_character)
-        {
-            m_character = PlayerMng.Instance.MainPlayer.Character;
-            return;
-        }
-
-        float currentHPFill = m_hpBar.Img.fillAmount;
         float targetFill = m_character.StatSystem.CurrHP / m_character.StatSystem.GetHP;
+        float currentHPFill = m_hpBar.Img.fillAmount;
+        if (m_deltaHp != m_character.StatSystem.CurrHP)
+        {
+            m_deltaHp = m_character.StatSystem.CurrHP;
+            m_hpText.text = m_character.StatSystem.CurrHP.ToString("F0") + " (" + (targetFill * 100).ToString("F0") + "%)";
+        }
         m_hpBar.Img.fillAmount = currentHPFill + (targetFill - currentHPFill) * Time.deltaTime * 1.5f;
-        // m_hpText.text = (targetFill * 100).ToString("F0") + "%";
-        m_hpText.text = m_character.StatSystem.CurrHP.ToString("F0") + " (" + (targetFill * 100).ToString("F0") + "%)";
+
         currentHPFill = m_mpBar.Img.fillAmount;
         targetFill = m_character.StatSystem.CurrMP / m_character.StatSystem.GetMP;
+        if (m_deltaMp != m_character.StatSystem.CurrMP)
+        {
+            m_deltaMp = m_character.StatSystem.CurrMP;
+            m_mpText.text = m_character.StatSystem.CurrMP.ToString("F0") + " (" + (targetFill * 100).ToString("F0") + "%)";
+        }
         m_mpBar.Img.fillAmount = currentHPFill + (targetFill - currentHPFill) * Time.deltaTime * 1.5f;
-        // m_mpText.text = (targetFill * 100).ToString("F0") + "%";
-        m_mpText.text = m_character.StatSystem.CurrMP.ToString("F0") + " (" + (targetFill * 100).ToString("F0") + "%)";
-        m_level.text = m_character.StatSystem.Level.ToString();
-        m_exp.text = PlayerMng.Instance.GetExpPercent().ToString("F2") + "%";
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Game : BaseUI
 {
+    const string m_npc = "NPC";
     // Game_Joystick m_joyStick;
     public CharacterWindow CharacterWindow;
     public MainWindow MainWindow;
@@ -26,8 +27,6 @@ public class Game : BaseUI
     {
         base.Init();
 
-        //m_joyStick = GetComponentInChildren<Game_Joystick>();
-        //m_joyStick.Init();
         MainWindow = GetComponentInChildren<MainWindow>();
         MainWindow.Init();
         SubWindow = GetComponentInChildren<SubWindow>();

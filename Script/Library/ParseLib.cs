@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Text;
 public class ParseLib : MonoBehaviour
 {
     public static void SetPlayerData(ref Player player, int uniqueID, EAllyType type, string infoData, string statusData, string equipData)
@@ -99,20 +99,20 @@ public class ParseLib : MonoBehaviour
     }
     public static string GetEquipData(Player player)
     {
-        List<string> equipList = new List<string>();
+        StringBuilder str = new StringBuilder(32);
         foreach (Item_Equipment item in player.Character.StatSystem.Equipment.Values)
-            equipList.Add(item.Handle + "," + item.Value);
-        string equipData = string.Join("/", equipList);
-        return equipData;
+            str.Append(item.Handle + "," + item.Value + "/");
+        if(str.Length > 0) str.Remove(str.Length - 1, 1);
+        return str.ToString();
     }
     public static string GetSkillData(Player player)
     {
-        List<string> skillList = new List<string>();
-        foreach (BaseSkill skill in PlayerMng.Instance.MainPlayer.Character.AttackSystem.SkillDic.Values)
-            if((skill.SkillInfo.Type & ESkillType.NotLearn) == 0)
-                skillList.Add(skill.SkillInfo.Handle + "," + skill.SkillInfo.Level);
-        string skillData = string.Join("/", skillList);
-        return skillData;
+        StringBuilder str = new StringBuilder(64);
+        foreach (BaseSkill skill in player.Character.AttackSystem.SkillDic.Values)
+            if ((skill.SkillInfo.Type & ESkillType.NotLearn) == 0)
+                str.Append(skill.SkillInfo.Handle + "," + skill.SkillInfo.Level + "/");
+        if (str.Length > 0) str.Remove(str.Length - 1, 1);
+        return str.ToString();
     }
     public static string GetClassKorConvert(ECharacterClass val)
     {

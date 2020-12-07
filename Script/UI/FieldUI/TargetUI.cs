@@ -9,7 +9,7 @@ public class TargetUI : BaseFieldUI
     Transform m_camera;
     BaseCharacter m_character;
     Vector3 m_eulerAngle;
-    public override void Init()
+    public override void Init(FieldUI.Register register)
     {
         m_camera = CameraMng.Instance.GetCamera<PlayerCamera>(CameraMng.CameraStyle.Player).UICamera.transform;
     }

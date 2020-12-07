@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using System;
+using System.Text;
 
 public partial class ItemMng : TSingleton<ItemMng>
 {
@@ -87,7 +88,7 @@ public partial class ItemMng : TSingleton<ItemMng>
     }
     public void AddItem(Item_Base item)
     {
-        string text = "<color=" + GameSystem.ColorRarity[(int)item.Rarity] + ">" + item.Name + "</color>";
+        StringBuilder text = new StringBuilder("<color=" + GameSystem.ColorRarity[(int)item.Rarity] + ">" + item.Name + "</color>");
         IItemNumber itemNumber = item as IItemNumber;
 
         if (itemNumber != null)
@@ -96,9 +97,9 @@ public partial class ItemMng : TSingleton<ItemMng>
                 if (Inventory[i].Handle == item.Handle)
                 {
                     ((IItemNumber)Inventory[i]).Number += itemNumber.Number;
-                    text += "를(을) " + itemNumber.Number + "개 획득하였습니다.";
+                    text.Append("를(을) " + itemNumber.Number + "개 획득하였습니다.");
                     if((int)item.Rarity >1)
-                        NetworkMng.Instance.AddChat(text);
+                        NetworkMng.Instance.AddChat(text.ToString());
                     return;
                 }
         }
@@ -106,12 +107,12 @@ public partial class ItemMng : TSingleton<ItemMng>
         Inventory.Add(item);
 
         if (itemNumber == null)
-            text += "를(을) 획득하였습니다.";
+            text.Append("를(을) 획득하였습니다.");
         else
-            text += "를(을) " + itemNumber.Number + "개 획득하였습니다.";
+            text.Append("를(을) " + itemNumber.Number + "개 획득하였습니다.");
 
         if ((int)item.Rarity > 1)
-            NetworkMng.Instance.AddChat(text);
+            NetworkMng.Instance.AddChat(text.ToString());
     }
     public void RemoveItem(Item_Base item)
     {

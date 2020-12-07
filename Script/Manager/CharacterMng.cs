@@ -44,7 +44,19 @@ public class CharacterMng : TSingleton<CharacterMng>
     public Stat GetCharacterStat(int handle) { return m_characterStat[handle]; }
     public Stat GetMonsterStat(int handle) { return m_monsterStat[handle]; }
     public bool UseMaterialClamp;
-    public void ClearCharacterList()
+    public void UnLoadEnermyAssets()
+    {
+        foreach(Queue<BaseEnermy> enermyQueue in m_enermyMemoryDic.Values)
+        {
+            if (enermyQueue.Count == 0)
+                continue;
+
+            for (int i = 0; i < enermyQueue.Count; ++i)
+                DestroyImmediate(enermyQueue.Dequeue().gameObject);
+        }
+        Resources.UnloadUnusedAssets();
+    }
+    public void RegisterEnermys()
     {
         foreach(BaseCharacter character in CurrCharacters.Values)
         {

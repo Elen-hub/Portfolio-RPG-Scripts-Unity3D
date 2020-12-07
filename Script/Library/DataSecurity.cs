@@ -9,6 +9,7 @@ namespace System
 {
     public struct HashInt 
     {
+        static int m_calKey = 0;
         int value;
         int KeyNum;
         const byte KeyLength = 8;
@@ -26,7 +27,7 @@ namespace System
         public HashInt(int value)
         {
             this.value = 0;
-            KeyNum = new Random().Next(0, KeyLength);
+            KeyNum = ++m_calKey % KeyLength;
             Encode = value;
         }
         int Encode {
@@ -122,6 +123,7 @@ namespace System
 
     public struct HashFloat
     {
+        static int m_calKey = 0;
         byte[] value;
         int KeyNum;
         const byte KeyLength = 8;
@@ -139,7 +141,7 @@ namespace System
         public HashFloat(float value)
         {
             this.value = new byte[4];
-            KeyNum = new Random().Next(0, KeyLength);
+            KeyNum = ++m_calKey % KeyLength;
             Encode = value;
         }
         public float Encode {

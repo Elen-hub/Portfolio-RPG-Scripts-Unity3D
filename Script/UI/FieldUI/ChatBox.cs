@@ -10,8 +10,9 @@ public class ChatBox : BaseFieldUI
     Text m_text;
     Image m_img;
     float m_elapsedTime;
-    public override void Init()
+    public override void Init(FieldUI.Register register)
     {
+        base.Init(register);
         // m_camera = CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.transform;
         m_text = GetComponentInChildren<Text>();
         m_img = GetComponent<Image>();
@@ -35,6 +36,7 @@ public class ChatBox : BaseFieldUI
         m_text.text = null;
         m_character.ChatBox = null;
         m_character = null;
+        dRegister(FieldUI.EUIFieldType.ChatBox, this);
         gameObject.SetActive(false);
     }
     private void LateUpdate()

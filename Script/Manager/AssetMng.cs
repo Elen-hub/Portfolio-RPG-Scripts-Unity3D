@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 using System.IO;
 using SimpleJSON;
 
-#if !UNITY_EDITOR
 public class AssetMng : TSingleton<AssetMng>
 {
     string path;
@@ -186,4 +185,3 @@ public class AssetMng : TSingleton<AssetMng>
         request.Dispose();
     }
 }
-#endif

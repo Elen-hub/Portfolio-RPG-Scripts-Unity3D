@@ -11,8 +11,9 @@ public class NameText : BaseFieldUI
     Color m_color;
     Transform m_pivot;
     Text m_nameText;
-    public override void Init()
+    public override void Init(FieldUI.Register register)
     {
+        base.Init(register);
         m_camera = CameraMng.Instance.GetCamera(CameraMng.CameraStyle.Player).camera.transform;
         m_nameText = GetComponentInChildren<Text>();
     }
@@ -37,6 +38,7 @@ public class NameText : BaseFieldUI
     }
     public void Disabled()
     {
+        dRegister(FieldUI.EUIFieldType.NameText, this);
         gameObject.SetActive(false);
     }
     private void LateUpdate()
@@ -53,7 +55,6 @@ public class NameText : BaseFieldUI
         }
 
         transform.position = m_pivot.position;
-        // transform.LookAt(m_camera);
     }
 
     private void OnTriggerEnter(Collider other)

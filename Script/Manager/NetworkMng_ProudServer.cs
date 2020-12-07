@@ -159,7 +159,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
             {
                 PlayerMng.Instance.ClearPlayerList();
                 PlayerMng.Instance.PlayerList.Add(m_netClient.LocalHostID, PlayerMng.Instance.MainPlayer);
-                CharacterMng.Instance.ClearCharacterList();
+                CharacterMng.Instance.RegisterEnermys();
                 ItemMng.Instance.ClearItemObject();
                 UIMng.Instance.CLOSE = UIMng.UIName.Option;
                 UIMng.Instance.CLOSE = UIMng.UIName.Game;
@@ -673,7 +673,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
             ItemMng.Instance.ClearItemObject();
             PlayerMng.Instance.ClearPlayerList();
             PlayerMng.Instance.PlayerList.Add(m_netClient.LocalHostID, PlayerMng.Instance.MainPlayer);
-            CharacterMng.Instance.ClearCharacterList();
+            CharacterMng.Instance.RegisterEnermys();
             CharacterMng.Instance.CurrCharacters.Add(PlayerMng.Instance.MainPlayer.Character.UniqueID, PlayerMng.Instance.MainPlayer.Character);
             NotifyJoinGroup();
 
@@ -867,7 +867,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         ItemMng.Instance.ClearItemObject();
         PlayerMng.Instance.ClearPlayerList();
         PlayerMng.Instance.PlayerList.Add(m_netClient.LocalHostID, PlayerMng.Instance.MainPlayer);
-        CharacterMng.Instance.ClearCharacterList();
+        CharacterMng.Instance.RegisterEnermys();
         CharacterMng.Instance.CurrCharacters.Add(PlayerMng.Instance.MainPlayer.Character.UniqueID, PlayerMng.Instance.MainPlayer.Character);
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).DeviceWindow.CurrChannel = m_currChannel;
         CameraMng.Instance.SetCamera(CameraMng.CameraStyle.Player | CameraMng.CameraStyle.UI);
@@ -881,7 +881,7 @@ public partial class NetworkMng : TSingleton<NetworkMng>
         ItemMng.Instance.ClearItemObject();
         PlayerMng.Instance.ClearPlayerList();
         PlayerMng.Instance.PlayerList.Add(m_netClient.LocalHostID, PlayerMng.Instance.MainPlayer);
-        CharacterMng.Instance.ClearCharacterList();
+        CharacterMng.Instance.RegisterEnermys();
         CharacterMng.Instance.CurrCharacters.Add(PlayerMng.Instance.MainPlayer.Character.UniqueID, PlayerMng.Instance.MainPlayer.Character);
         CameraMng.Fade_OFF(1f);
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).DeviceWindow.CurrChannel = m_currChannel;

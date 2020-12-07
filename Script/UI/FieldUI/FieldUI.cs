@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FieldUI : BaseUI
 {
+    public delegate void Register(EUIFieldType type, BaseFieldUI ui);
     public enum EUIFieldType
     {
         DamageText,
@@ -11,34 +12,32 @@ public class FieldUI : BaseUI
         ChatBox,
         TargetUI,
     }
-    Dictionary<EUIFieldType, List<BaseFieldUI>> m_fieldUIDic = new Dictionary<EUIFieldType, List<BaseFieldUI>>();
+    Dictionary<EUIFieldType, Queue<BaseFieldUI>> m_fieldUIDic = new Dictionary<EUIFieldType, Queue<BaseFieldUI>>();
     public TargetUI TargetUI;
+    public void AddRegister(EUIFieldType type, BaseFieldUI ui)
+    {
+        m_fieldUIDic[type].Enqueue(ui);
+    }
     public override void Init()
     {
         base.Init();
 
         TargetUI = Instantiate(Resources.Load<TargetUI>("UI/FieldUI/TargetUI"), transform);
-        TargetUI.Init();
+        TargetUI.Init(null);
         m_canvas.planeDistance = 100;
         m_canvas.worldCamera = CameraMng.Instance.GetCamera<PlayerCamera>(CameraMng.CameraStyle.Player).UICamera;
-        m_fieldUIDic.Add(EUIFieldType.DamageText, new List<BaseFieldUI>());
-        m_fieldUIDic.Add(EUIFieldType.NameText, new List<BaseFieldUI>());
-        m_fieldUIDic.Add(EUIFieldType.ChatBox, new List<BaseFieldUI>());
+        m_fieldUIDic.Add(EUIFieldType.DamageText, new Queue<BaseFieldUI>());
+        m_fieldUIDic.Add(EUIFieldType.NameText, new Queue<BaseFieldUI>());
+        m_fieldUIDic.Add(EUIFieldType.ChatBox, new Queue<BaseFieldUI>());
     }
 
     public T FindDisabledUIField<T>(EUIFieldType type) where T : BaseFieldUI
     {
-        for (int i = 0; i < m_fieldUIDic[type].Count; ++i)
-        {
-            if (m_fieldUIDic[type][i].gameObject.activeSelf)
-                continue;
-
-            return m_fieldUIDic[type][i] as T;
-        }
+        if (m_fieldUIDic[type].Count > 0)
+            return m_fieldUIDic[type].Dequeue() as T;
 
         T t = Instantiate(Resources.Load<T>("UI/FieldUI/" + type), transform);
-        t.Init();
-        m_fieldUIDic[type].Add(t);
+        t.Init(AddRegister);
         return t;
     }
     public DamageText SetDamageText(BaseCharacter target, string damage, Color color, bool isCritical = false)

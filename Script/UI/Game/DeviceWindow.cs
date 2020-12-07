@@ -28,7 +28,6 @@ public class DeviceWindow : MonoBehaviour
         m_channel = transform.Find("ChannelDropDown").GetComponent<Dropdown>();
         m_channel.onValueChanged.AddListener(ChannelChange);
     }
-
     public void Enabled()
     {
         m_channel.enabled = MapMng.Instance.CurrMap.Type == EMapType.Public;

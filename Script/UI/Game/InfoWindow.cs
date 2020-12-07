@@ -9,6 +9,7 @@ public class InfoWindow : MonoBehaviour
     Text m_nameText;
     EnergyBarBase m_hpBar;
     Text m_hpText;
+    float m_currHP;
 
     TargetUI m_targetUI;
 
@@ -69,6 +70,7 @@ public class InfoWindow : MonoBehaviour
         m_targetUI.Disabled();
         PlayerMng.Instance.MainPlayer.Character.Target = null;
         m_character = null;
+        m_currHP = 0;
         gameObject.SetActive(false);
     }
     private void LateUpdate()
@@ -81,7 +83,11 @@ public class InfoWindow : MonoBehaviour
         float currentHPFill = m_hpBar.Img.fillAmount;
         float targetFill = m_character.StatSystem.CurrHP / m_character.StatSystem.GetHP;
         m_hpBar.Img.fillAmount = currentHPFill + (targetFill - currentHPFill) * Time.deltaTime * 1.5f;
-        m_hpText.text = m_character.StatSystem.CurrHP.ToString("F0") + " / " + m_character.StatSystem.GetHP.ToString("F0");
+        if(m_currHP != m_character.StatSystem.CurrHP)
+        { 
+            m_currHP = m_character.StatSystem.CurrHP;
+            m_hpText.text = m_currHP.ToString("F0") + " / " + m_character.StatSystem.GetHP.ToString("F0");
+        }
     }
     void OnClickShowStat()
     {

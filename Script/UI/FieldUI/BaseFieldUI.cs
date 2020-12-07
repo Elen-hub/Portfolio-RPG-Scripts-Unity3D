@@ -5,5 +5,9 @@ using UnityEngine;
 
 public abstract class BaseFieldUI : MonoBehaviour
 {
-    public abstract void Init();
+    protected FieldUI.Register dRegister;
+    public virtual void Init(FieldUI.Register register)
+    {
+        dRegister = register;
+    }
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnergyBarBase : BaseFieldUI
+public class EnergyBarBase : MonoBehaviour
 {
     public Image Img;
 
-    public override void Init()
+    public virtual void Init()
     {
         Img = transform.GetComponentInChildren<Image>();
         Img.type = Image.Type.Filled;

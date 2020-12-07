@@ -98,7 +98,6 @@ public class MapMng : TSingleton<MapMng>
             m_rain.RainIntensity = 0;
             m_rain.RainMistThreshold = 0;
         }
-
     }
     public override void Init()
     {

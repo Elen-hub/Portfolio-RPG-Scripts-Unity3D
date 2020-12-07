@@ -16,8 +16,9 @@ public class DamageText : BaseFieldUI
     Vector3 m_nextPos;
     Vector3 m_reverseVector3 = new Vector3(1, 1, 1);
     float m_elapsedTime;
-    public override void Init()
+    public override void Init(FieldUI.Register register)
     {
+        base.Init(register);
         m_criticalTrs = transform.Find("CriticalText");
         m_criticalText = m_criticalTrs.GetComponent<Text>();
         m_damageTrs = transform.Find("DamageText");
@@ -69,6 +70,7 @@ public class DamageText : BaseFieldUI
     }
     public void Disabled()
     {
+        dRegister(FieldUI.EUIFieldType.DamageText, this);
         gameObject.SetActive(false);
     }
     private void LateUpdate()

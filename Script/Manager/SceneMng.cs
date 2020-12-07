@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +18,7 @@ public class SceneMng : TSingleton<SceneMng>
     public bool IsSceneLoad;
     EScene m_currScene = 0;
     Dictionary<EScene, BaseScene> m_sceneList = new Dictionary<EScene, BaseScene>();
-    EMapAreaGroup CurrLoadArea;
+    EMapAreaGroup m_currLoadArea;
 
     public void AddScript<T>(EScene key) where T : BaseScene
     {
@@ -56,6 +55,8 @@ public class SceneMng : TSingleton<SceneMng>
     }
     IEnumerator SceneChange(string name, System.Action after)
     {
+        System.GC.Collect();
+
 #if UNITY_EDITOR
         CameraMng.Fade_ON(1);
         yield return new WaitForSeconds(1);
@@ -70,20 +71,24 @@ public class SceneMng : TSingleton<SceneMng>
             after?.Invoke();
 
         IsSceneLoad = true;
+        EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
+        if (m_currLoadArea != prevArea)
+        {
+            AssetMng.Instance.UnLoadAsset("scene_" + m_currLoadArea);
+            CharacterMng.Instance.UnLoadEnermyAssets();
+            m_currLoadArea = prevArea;
+        }
 
 #else
         CameraMng.Fade_ON(1);
-        Debug.Log("2");
         yield return new WaitForSeconds(1);
-                Debug.Log("3");
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetMap();
-                Debug.Log("4");
         LoadingScene loadingUI = UIMng.Instance.Open<LoadingScene>(UIMng.UIName.LoadingScene);
         EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
-        if (CurrLoadArea != prevArea)
+        if (m_currLoadArea != prevArea)
         {
-            if(CurrLoadArea == 0)
-                CurrLoadArea = prevArea;
+            if(m_currLoadArea == 0)
+                m_currLoadArea = prevArea;
 
             yield return AssetMng.Instance.LoadAsset(loadingUI, "scene_" + prevArea);
         }
@@ -107,10 +112,11 @@ public class SceneMng : TSingleton<SceneMng>
                     async.allowSceneActivation = true;
             }
         }
-        if (CurrLoadArea != prevArea)
+        if (m_currLoadArea != prevArea)
         {
-            AssetMng.Instance.UnLoadAsset("scene_" + CurrLoadArea);
-            CurrLoadArea = prevArea;
+            AssetMng.Instance.UnLoadAsset("scene_" + m_currLoadArea);
+            CharacterMng.Instance.UnLoadEnermyAssets();
+            m_currLoadArea = prevArea;
         }
 
         if (after != null)
@@ -118,14 +124,15 @@ public class SceneMng : TSingleton<SceneMng>
         IsSceneLoad = true;
         UIMng.Instance.CLOSE = UIMng.UIName.LoadingScene;
 #endif
+        CharacterMng.Instance.UnLoadEnermyAssets();
         WorldCamera worldCam = CameraMng.Instance.GetCamera<WorldCamera>(CameraMng.CameraStyle.World);
         WorldCamera.ReturnMethod method = worldCam.FindAction("JoinAction_" + MapMng.Instance.CurrMap.SceneName);
         if (method != null)
         {
             UIMng.Instance.CLOSE = UIMng.UIName.Game;
-            worldCam.Enabled = true;
+            CameraMng.Instance.SetCamera(CameraMng.CameraStyle.World);
             yield return StartCoroutine(method());
-            worldCam.Enabled = false;
+            CameraMng.Instance.SetCamera(CameraMng.CameraStyle.Player);
             UIMng.Instance.OPEN = UIMng.UIName.Game;
         }
         CameraMng.Fade_OFF(1);
@@ -142,8 +149,8 @@ public class SceneMng : TSingleton<SceneMng>
     {
         SetCurrScene(EScene.TitleScene);
 #if !UNITY_EDITOR
-        AssetMng.Instance.UnLoadAsset("scene_" + CurrLoadArea);
+        AssetMng.Instance.UnLoadAsset("scene_" + m_currLoadArea);
 #endif
-        CurrLoadArea = 0;
+        m_currLoadArea = 0;
     }
 }

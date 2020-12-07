@@ -88,6 +88,10 @@ public class PlayerMng : TSingleton<PlayerMng>
     public Dictionary<HostID, Player> PlayerList = new Dictionary<HostID, Player>();
     public Player MainPlayer;
     public Party CurrParty;
+    CharacterWindow m_characterWindow;
+    public CharacterWindow SetCharacterWindow {
+        set { m_characterWindow = value; }
+    }
     public void AddExp(Player player, int exp)
     {
         BaseCharacter character = player.Character;
@@ -102,9 +106,11 @@ public class PlayerMng : TSingleton<PlayerMng>
             EffectMng.Instance.FindEffect("FX/Effect_Levelup", player.Character.transform.position, Vector3.zero, 4);
             character.StatSystem.CurrHP = character.StatSystem.GetHP;
             character.StatSystem.CurrMP = character.StatSystem.GetMP;
+            m_characterWindow.SetLevelText = player.Level.ToString();
         }
         MainPlayer.Exp = EXP;
         character.StatSystem.Exp = EXP;
+        m_characterWindow.SetEXPText = EXP.ToString("F2");
     }
     public void ClearPlayerList()
     {

@@ -17,6 +17,7 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
     Image m_backGround;
     Text m_coolTimeText;
     bool m_isAttackBTN;
+    float m_currValue;
     public void Init(int number)
     {
         if (number == 7)
@@ -26,7 +27,6 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
         m_icon = transform.Find("Icon").GetComponent<Image>();
         m_backGround = transform.Find("BackGround").GetComponent<Image>();
         m_coolTimeText = transform.Find("CoolTime").GetComponent<Text>();
-        // GetComponent<Button>().onClick.AddListener(Use);
     }
     public void Enabled()
     {
@@ -76,31 +76,6 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
 
         m_isClick = false;
 
-        //if ((m_skill.SkillInfo.Type & ESkillType.Keydown) != 0)
-        //    m_skill.EndKeydown();
-        //if ((m_skill.SkillInfo.Type & ESkillType.Channeling) != 0)
-        //    m_skill.EndChanneling();
-        //if (m_skill != null)
-        //{
-        //    if ((m_skill.SkillInfo.Type & ESkillType.Link) != 0)
-        //    {
-        //        if (m_linkSkill != null)
-        //        {
-        //            if (m_skill.LinkSkill == null)
-        //            {
-        //                Enabled();
-        //                return;
-        //            }
-        //        }
-
-        //        BaseSkill skill = m_skill.LinkSkill;
-        //        m_linkSkill = m_skill;
-        //        m_skill = skill;
-        //        m_icon.sprite = Resources.Load<Sprite>(m_skill.Icon);
-        //        m_coolTimeText.text = "LINK";
-        //        m_backGround.fillAmount = 0;
-        //    }
-        //}
         if ((m_skill.SkillInfo.Type & ESkillType.Keydown) != 0 || (m_skill.SkillInfo.Type & ESkillType.Channeling) != 0)
             NetworkMng.Instance.NotifyCharacterState_SkillEnd(PlayerMng.Instance.MainPlayer.Character.MoveSystem.GetCurrAxis, m_skill.SkillInfo.Handle);
 
@@ -149,14 +124,6 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
             m_isClick = true;
             NetworkMng.Instance.NotifyCharacterState_Skill(character.MoveSystem.GetCurrAxis, m_skill.SkillInfo.Handle);
         }
-        //if (m_isAttackBTN && m_contents == null)
-        //{
-        //    if (character.IsStun || character.IsHit || character.IsNuckback)
-        //        return;
-
-        //    if ((character.State == BaseCharacter.CharacterState.Battle && !character.AttackSystem.HoldAttack) || character.AttackSystem.CompleteAttack)
-        //        NetworkMng.Instance.NotifyCharacterState_Attack(character.MoveSystem.GetCurrAxis);
-        //}
         if (m_isAttackBTN && m_contents == null)
         {
             if (character.IsStun || character.IsHit || character.IsNuckback)
@@ -241,7 +208,14 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
             else
             {
                 float coolTime = (m_skill.CoolTime - m_skill.ElapsedTime);
-                if (coolTime > 0)  m_coolTimeText.text = (m_skill.CoolTime - m_skill.ElapsedTime).ToString("F0");
+                if (coolTime > 0)
+                {
+                    if (m_currValue != coolTime)
+                    {
+                        m_currValue = coolTime;
+                        m_coolTimeText.text = m_currValue.ToString("F0");
+                    }
+                }
                 else m_coolTimeText.text = null;
                 m_backGround.fillAmount = 1 - (m_skill.ElapsedTime / m_skill.CoolTime);
             }
@@ -252,7 +226,13 @@ public class InputWindow_QuickSlotBTN : MonoBehaviour, IPointerDownHandler, IPoi
             Enabled();
             return;
         }
-        if(m_itemNumber != null)
-            m_coolTimeText.text = "x" + m_itemNumber.Number;
+        if (m_itemNumber != null)
+        {
+            if (m_currValue != m_itemNumber.Number)
+            {
+                m_currValue = m_itemNumber.Number;
+                m_coolTimeText.text = "x" + m_currValue;
+            }
+        }
     }
 }
