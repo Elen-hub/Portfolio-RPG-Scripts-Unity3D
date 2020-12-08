@@ -28,6 +28,7 @@ public class UGC : TSingleton<UGC>
         System.GC.Collect();
         UnityEngine.Scripting.GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
     }
+#if !UNITY_EDITOR
     void LateUpdate()
     {
         // 주기적으로 수집
@@ -46,4 +47,5 @@ public class UGC : TSingleton<UGC>
                 Collect();
         }
     }
+#endif
 }

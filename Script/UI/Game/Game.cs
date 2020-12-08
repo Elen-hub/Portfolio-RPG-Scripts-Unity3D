@@ -50,7 +50,6 @@ public class Game : BaseUI
     }
     public override void Open()
     {
-        UnityEngine.Scripting.GarbageCollector.GCMode = UnityEngine.Scripting.GarbageCollector.Mode.Disabled;
         m_exitBTN.SetActive(MapMng.Instance.CurrMap.Type == EMapType.Private);
         InputWindow.Enabled(GameSystem.Joystick);
         DeviceWindow.Enabled();

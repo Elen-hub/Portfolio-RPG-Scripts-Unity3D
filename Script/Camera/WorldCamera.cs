@@ -19,9 +19,10 @@ public class WorldCamera : BaseCamera
     {
         try
         {
-            System.Delegate del = System.Delegate.CreateDelegate(typeof(ReturnMethod), m_cameraAction, methodName);
-            if (del != null) 
-                return del as ReturnMethod;
+            System.Reflection.MethodInfo info = typeof(CameraAction).GetMethod(methodName);
+            ReturnMethod del = info.CreateDelegate(typeof(ReturnMethod), m_cameraAction) as ReturnMethod;
+            if (del != null)
+                return del;
         }
         catch
         {
