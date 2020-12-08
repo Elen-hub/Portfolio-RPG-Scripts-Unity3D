@@ -55,8 +55,6 @@ public class SceneMng : TSingleton<SceneMng>
     }
     IEnumerator SceneChange(string name, System.Action after)
     {
-        System.GC.Collect();
-
 #if UNITY_EDITOR
         CameraMng.Fade_ON(1);
         yield return new WaitForSeconds(1);
@@ -84,7 +82,8 @@ public class SceneMng : TSingleton<SceneMng>
         yield return new WaitForSeconds(1);
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetMap();
         LoadingScene loadingUI = UIMng.Instance.Open<LoadingScene>(UIMng.UIName.LoadingScene);
-        EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
+        Map map = MapMng.Instance.CurrMap;
+        EMapAreaGroup prevArea = map.Group;
         if (m_currLoadArea != prevArea)
         {
             if(m_currLoadArea == 0)
@@ -118,6 +117,7 @@ public class SceneMng : TSingleton<SceneMng>
             CharacterMng.Instance.UnLoadEnermyAssets();
             m_currLoadArea = prevArea;
         }
+        UGC.Instance.UseRuntimeCollect = map.Type == EMapType.Public;
 
         if (after != null)
             after?.Invoke();

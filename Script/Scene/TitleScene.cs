@@ -31,12 +31,6 @@ public class TitleScene : BaseScene {
             while (!NetworkMng.IsLoad)
                 yield return wait;
         }
-        if (!DBMng.IsLoad)
-        {
-            DBMng.Instance.Init();
-            while (!DBMng.IsLoad)
-                yield return wait;
-        }
         if (!PlayerMng.IsLoad)
         {
             PlayerMng.Instance.Init();
