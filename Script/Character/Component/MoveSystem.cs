@@ -7,7 +7,6 @@ using UnityEngine.Events;
 public class MoveSystem : MonoBehaviour
 {
     BaseCharacter m_character;
-    Rigidbody m_rigidbody;
     NavMeshAgent m_navMesh;
     public Transform Target;
     public Vector3 TargetPos;
@@ -64,7 +63,6 @@ public class MoveSystem : MonoBehaviour
     public void Init()
     {
         m_character = GetComponent<BaseCharacter>();
-        m_rigidbody = GetComponent<Rigidbody>();
         m_navMesh = GetComponent<NavMeshAgent>();
     }
     public void RotateAxis()
@@ -99,13 +97,6 @@ public class MoveSystem : MonoBehaviour
         m_navMesh.isStopped = false;
         m_navMesh.speed = m_moveSpeed;
         m_navMesh.SetDestination(pos);
-        //if (Vector3.Distance(m_navMesh.destination, m_navMesh.transform.position) <= m_navMesh.stoppingDistance)
-        //{
-        //    if (!m_navMesh.hasPath || m_navMesh.velocity.sqrMagnitude == 0f)
-        //    {
-        //        Debug.Log("완료");
-        //    }
-        //}
         if (!m_navMesh.pathPending)
         {
             if (m_navMesh.remainingDistance <= distance)

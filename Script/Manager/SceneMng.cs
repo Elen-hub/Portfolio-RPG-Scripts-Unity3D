@@ -59,7 +59,10 @@ public class SceneMng : TSingleton<SceneMng>
         CameraMng.Fade_ON(1);
         yield return new WaitForSeconds(1);
         UIMng.Instance.Open<Game>(UIMng.UIName.Game).SubWindow.MapWindow.SetMap();
-
+        EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
+        if (m_currLoadArea != prevArea)
+            if (m_currLoadArea == 0)
+                m_currLoadArea = prevArea;
         AsyncOperation async = SceneManager.LoadSceneAsync(name);
 
         while (!async.isDone)
@@ -69,7 +72,6 @@ public class SceneMng : TSingleton<SceneMng>
             after?.Invoke();
 
         IsSceneLoad = true;
-        EMapAreaGroup prevArea = MapMng.Instance.CurrMap.Group;
         if (m_currLoadArea != prevArea)
         {
             AssetMng.Instance.UnLoadAsset("scene_" + m_currLoadArea);

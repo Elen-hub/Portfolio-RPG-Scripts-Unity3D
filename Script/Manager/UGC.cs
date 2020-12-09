@@ -10,41 +10,34 @@ public class UGC : TSingleton<UGC>
     int m_frameCount;
     public override void Init()
     {
-        UnityEngine.Scripting.GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
     }
     public bool UseRuntimeCollect {
         set {
-            if (m_isCollect = value)
-            {
-                m_frameCount = 0;
-                return;
-            }
             Collect();
+            m_isCollect = value;
         }
     }
     void Collect()
     {
+        m_frameCount = 0;
         UnityEngine.Scripting.GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
         System.GC.Collect();
         UnityEngine.Scripting.GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
     }
 #if !UNITY_EDITOR
+    const int m_maxSize = 0b10000000000 * 0b10000000000 * 0b10100;
     void LateUpdate()
     {
+        if (++m_frameCount < 240)
+            return;
+
         // 주기적으로 수집
         if (m_isCollect)
-        {
-            if (++m_frameCount > 240)
-            {
-                m_frameCount = 0;
-                Collect();
-            }
-        }
+            Collect();
         // 한번에 수집
-        else
+        else if (GC.GetTotalMemory(false) > m_maxSize)
         {
-            if (GC.GetTotalMemory(false) > 20000000)
-                Collect();
+            Collect();
         }
     }
 #endif

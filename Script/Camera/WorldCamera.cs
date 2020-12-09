@@ -24,9 +24,8 @@ public class WorldCamera : BaseCamera
             if (del != null)
                 return del;
         }
-        catch
-        {
-            return null;
+        catch{
+
         }
         return null;
     }
